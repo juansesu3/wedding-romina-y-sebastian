@@ -1,26 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+DK+Loopet:wght@100..400&family=Tagesschrift&display=swap');
+
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*   /*#d49e7a, #bd966e, #d3ba9b, #d0b7a4*/
+* {
+
+  box-sizing: border-box;
+  font-family: "Dancing Script", cursive;
+  font-optical-sizing: auto;
+  font-style: normal;
+
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #fff
+}
+
+/* Scrollbar General (Horizontal y Vertical) */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+  /* Añadir esto para el scroll horizontal */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(128, 128, 128, 0.1);
+  /* Fondo más suave y transparente */
+  border-radius: 1px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgba(230, 230, 230, 0.7);
+  /* Color más suave y semitransparente */
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(204, 204, 204, 0.9);
+  /* Un poco más oscuro al hacer hover */
+}
+
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 30s linear infinite;
+}
+
+.btn-primary {
+  @apply capitalize bg-[#d49e7a] text-xl cursor-pointer hover:bg-[#87725a] text-white text-center flex items-center justify-center py-2 px-14 rounded-md;
 }
