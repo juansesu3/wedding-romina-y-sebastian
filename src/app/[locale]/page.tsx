@@ -17,8 +17,8 @@ export default function Home() {
       opacity: 1,
       y: 0,
       transition: {
-        delay: i * 0.5, // delay escalonado
-        duration: 1,
+        delay: i * 1, // delay escalonado
+        duration: 3,
         ease: 'easeOut'
       }
     })
@@ -166,7 +166,7 @@ export default function Home() {
         </section>
       </FadeInOnScroll>
       {/* Galería de fotos */}
-      <FadeInOnScroll>
+
         <section className="py-12 bg-white">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl text-center font-semibold mb-8">Galería</h2>
@@ -191,7 +191,7 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </FadeInOnScroll>
+   
       {/* Fiesta, Instagram, Música, Fotos */}
       {[{
         icon: <GiPartyPopper size={60} />,

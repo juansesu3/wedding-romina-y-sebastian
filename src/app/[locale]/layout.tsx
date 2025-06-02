@@ -1,32 +1,28 @@
 import { ReactNode } from 'react';
-import { NextIntlClientProvider } from 'next-intl';
+import {NextIntlClientProvider, hasLocale} from 'next-intl';
+import {notFound} from 'next/navigation';
+import {routing} from '@/i18n/routing';
 import FixHydra from "../componentes/FixHydra";
-import { getMessages } from 'next-intl/server';
 import "../globals.css";
 
-type Locale = 'es' | 'fr';
-
-interface RootLayoutProps {
-  children: ReactNode;
-  params: { locale: Locale };
-}
-
-export default async function RootLayout({ children, params }: RootLayoutProps) {
-  const { locale } = params;
-
-  let messages;
-  try {
-    messages = await getMessages({ locale });
-  } catch (error) {
-    console.error(`Error fetching messages for locale: ${locale}`, error);
-    messages = {};
+export default async function LocaleLayout({
+  children,
+  params
+}: {
+  children: React.ReactNode;
+  params: Promise<{locale: string}>;
+}) {
+  // Ensure that the incoming `locale` is valid
+  const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
   }
 
   return (
     <html lang={locale}>
       <body>
         <FixHydra>
-          <NextIntlClientProvider locale={locale} messages={messages}>
+          <NextIntlClientProvider locale={locale} >
             {children}
           </NextIntlClientProvider>
         </FixHydra>
