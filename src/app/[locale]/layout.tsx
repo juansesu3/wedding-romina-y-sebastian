@@ -16,7 +16,7 @@ export default async function RootLayout({
   params:{ locale: Locale };
 }) {
   // Aquí simplemente destructurasmos el locale sin await
-  const {locale }= await params
+  const {locale }=  params
   // Obtener los mensajes correspondientes al locale
   let messages;
   try {
