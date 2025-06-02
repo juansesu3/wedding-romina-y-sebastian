@@ -1,5 +1,4 @@
 'use client';
-
 import FadeInOnScroll from '@/app/componentes/FadeScroll';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -34,6 +33,7 @@ const LoginPage = () => {
             router.push('/');
         } catch (err) {
             setError('Error de conexión. Intenta nuevamente.');
+            console.log(err)
         } finally {
             setLoading(false);
         }

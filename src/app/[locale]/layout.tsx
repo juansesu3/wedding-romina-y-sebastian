@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+
 import { NextIntlClientProvider } from 'next-intl';
 import FixHydra from "../componentes/FixHydra";
 import { getMessages } from 'next-intl/server';
 import "../globals.css";
 
-type Locale = 'es' | 'fr';
+// type Locale = 'es' | 'fr';
 // const availableLocales: Locale[] = ["es", "fr",];
 
 // ✅ Solución: Usar generateStaticParams para manejar los locales antes de `generateMetadata`
