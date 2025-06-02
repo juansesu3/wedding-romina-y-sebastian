@@ -6,20 +6,20 @@ import "../globals.css";
 import FixHydra from "../componentes/FixHydra";
 
 
-type Locale =  'es' | 'fr' ;
-const availableLocales: Locale[] = [ "es", "fr", ];
+type Locale = 'es' | 'fr';
+const availableLocales: Locale[] = ["es", "fr",];
 
 // ✅ Solución: Usar generateStaticParams para manejar los locales antes de `generateMetadata`
 export function generateStaticParams() {
   return availableLocales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
+ export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   // ✅ Ahora los `params` se generan correctamente antes de ejecutar esta función
-  const {locale} =  await params// Cast para asegurar que es un Locale válido
+  const locale = params.locale;// Cast para asegurar que es un Locale válido
 
   const metadataTranslations = {
- 
+
     es: {
       title: 'Romi & Sebas',
       description: 'Transforma tu comercio electrónico y soporte al cliente con las avanzadas soluciones de IA de PandorAI. Mejora las interacciones con los clientes, agiliza los procesos y fomenta el crecimiento empresarial con nuestros sistemas de IA personalizados.',
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
       keywords: 'IA pour E-Commerce, IA pour Support Client, Solutions IA, Automatisation pour E-Commerce, Support Client IA, PandorAI',
       locale: 'fr_FR',
     },
-  
+
   };
 
   const metadataLocale = metadataTranslations[locale as Locale] || metadataTranslations.fr;
@@ -79,7 +79,7 @@ export default async function RootLayout({
   params:{ locale: string };
 }) {
   // Aquí simplemente destructuramos el locale sin await
-  const { locale } = await params;
+  const locale = params.locale;
   // Obtener los mensajes correspondientes al locale
   let messages;
   try {
@@ -93,11 +93,7 @@ export default async function RootLayout({
       <body>
         <FixHydra>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            
-       
-              {children}
-         
-           
+            {children}
           </NextIntlClientProvider>
         </FixHydra>
       </body>

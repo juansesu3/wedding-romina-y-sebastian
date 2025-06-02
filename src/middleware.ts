@@ -2,25 +2,16 @@ import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 
-const supportedLocales = [ "es", "fr"];
+const supportedLocales = ["es", "fr"];
 const defaultLocale = "fr";
 
-
-
-// Definir las rutas privadas que requieren autenticación
-const privateRoutes = ["/order"];
-
+// Middleware de internacionalización
 const intlMiddleware = createMiddleware(routing);
 
 export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Redirigir desde la raíz '/' al locale predeterminado
-  if (pathname === "/") {
-    return NextResponse.redirect(new URL(`/${defaultLocale}/`, req.url));
-  }
-
-  // Permitir el acceso a recursos estáticos y rutas internas de Next.js (_next)
+  // Archivos estáticos permitidos sin restricción
   const staticFiles = [
     "/favicon.ico",
     "/_next",
@@ -33,47 +24,36 @@ export default function middleware(req: NextRequest) {
   if (staticFiles.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
-  const token = req.cookies.get("user_token");
 
-  // Function to get the locale from the pathname
+  // Obtener locale de la URL
   function getLocale(pathname: string) {
     const firstSegment = pathname.split("/")[1];
-    if (supportedLocales.includes(firstSegment)) {
-      return firstSegment;
-    }
-    return defaultLocale;
+    return supportedLocales.includes(firstSegment) ? firstSegment : defaultLocale;
   }
 
-  // Get the locale safely
   const locale = getLocale(pathname);
+  const token = req.cookies.get("user_token")?.value;
 
-  // Check if the current route is public (no authentication required)
- 
+  const isLoginPage = pathname === `/${locale}/login`;
 
-  // Check if the current route is private (requires authentication)
-  const isPrivateRoute =
-    privateRoutes.some(
-      (route) =>
-        pathname.startsWith(route) ||
-        pathname.startsWith(`/${locale}${route}`) ||
-        pathname.startsWith(`/${locale}/${route}`)
-    ) || /^\/(es|fr)\/(order|profile)/.test(pathname);
+  // 🔒 Solo proteger la ruta raíz de cada locale
+  const isProtectedRoot = pathname === `/${locale}` || pathname === `/${locale}/`;
 
-  if (isPrivateRoute && !token) {
-    // Redirect unauthenticated users trying to access private routes to the login page
-    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+  if (isProtectedRoot && !token && !isLoginPage) {
+    const url = req.nextUrl.clone();
+    url.pathname = `/${locale}/login`;
+    return NextResponse.redirect(url);
   }
 
-  // Proceed with the request
+  // Continuar con middleware de next-intl
   return intlMiddleware(req);
 }
 
 export const config = {
   matcher: [
-    "/", // Redirigir la raíz
-    "/:locale(es|fr)", // Locales principales
-    "/:locale(es|fr)/", // Específicamente para /shop
-    "/:locale(es|fr)/:path*", // Todas las subrutas
-    "/(es|fr)/:path*",
+    "/", // redirige la raíz a /[locale]
+    "/:locale(es|fr)", // protege /es o /fr
+    "/:locale(es|fr)/", // protege /es/ o /fr/
+    "/:locale(es|fr)/:path*", // todas las subrutas (solo usadas para intl)
   ],
 };
