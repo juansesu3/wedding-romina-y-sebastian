@@ -152,19 +152,20 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <button className="btn-primary mt-10 mx-auto">Ver Fotos</button>
+         
         </section>
       </FadeInOnScroll>
 
       {/* Dresscode y regalo */}
       <FadeInOnScroll>
-        <section className="">
-          <div className="flex justify-center items-center min-h-screen bg-[#faf6f3] p-4 relative">
+        <section className="py-16 text-center">
+          <div className="flex justify-center items-center px-2">
+      
             <div
-              className={`relative w-full max-w-[400px] transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
+              className={`relative w-full max-w-[400px]  transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
             >
               {/* Lado frontal */}
-              <div className="absolute w-full min-h-[540px] rounded-xl shadow-lg flex flex-col justify-center items-center gap-6 p-6 bg-white [backface-visibility:hidden]">
+              <div className=" absolute inset-0  h-full w-full rounded-xl shadow-lg flex flex-col justify-center items-center gap-6 p-6 bg-white [backface-visibility:hidden]">
                 <GiTravelDress size={80} className="text-[clamp(3rem,8vw,6rem)] mb-4 " />
                 <div className="bg-[#cacaca] h-[2px] w-1/3 mb-8" />
                 <p className="text-[clamp(1.25rem,3vw,1.75rem)] text-center">
@@ -180,7 +181,7 @@ export default function Home() {
               </div>
 
               {/* Lado trasero */}
-              <div className="absolute w-full rounded-xl shadow-lg flex flex-col justify-start items-center p-6 bg-white [transform:rotateY(180deg)] [backface-visibility:hidden]">
+              <div className=" w-full rounded-xl shadow-lg flex flex-col justify-start items-center p-6 bg-white [transform:rotateY(180deg)] [backface-visibility:hidden]">
                 
                 <Image src={"/drescode-image.png"} alt="dresscode" className="h-52 w-52" width={500} height={500} />
                 <h3 className="text-[clamp(1.25rem,3vw,1.75rem)] font-bold mb-4">Formal</h3>
@@ -206,7 +207,7 @@ export default function Home() {
                 </button>
               </div>
             </div>
-          </div>
+            </div>
         </section>
       </FadeInOnScroll>
 
@@ -237,45 +238,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Fiesta, Instagram, Música, Fotos */}
       {[{
-        icon: <GiPartyPopper size={60} />,
-        title: "La fiesta está en marcha",
-        text: "Será una ocasión para relajarnos y disfrutar juntos, en un ambiente para todos.",
-        button: "Sugerir canción"
-      },
-      // {
-      //   icon: <IoImagesOutline size={60} />,
-      //   title: "¡Si hay foto, hay historia!",
-      //   text: "Síguenos en nuestra cuenta de Instagram y etiquétanos en tus fotos y videos.",
-      //   subtext: "@TUUSUARIO",
-      //   button: "Ver Instagram"
-      // }, 
-      // {
-      //   icon: <MdOutlineLibraryMusic size={60} />,
-      //   title: "¡Que suene la música!",
-      //   text: "Ayúdanos a elegir el soundtrack de la noche.",
-      //   button: "Sugerir canción"
-      // }, 
-      {
-        icon: <IoCameraOutline size={60} />,
-        title: "Fotos inolvidables",
-        text: "Queremos capturar cada sonrisa, cada abrazo, cada momento.",
-        button: "Sube tus fotos"
-      }].map(({ icon, title, text, button }, idx) => (
-        <FadeInOnScroll key={idx}>
-          <section key={idx} className="py-12 bg-[#faf6f3] text-center px-4">
-            <div className="flex flex-col items-center gap-4">
-              {icon}
-              <div className="bg-[#cacaca] h-[1px] w-1/3" />
-              <h5 className="text-2xl">{title}</h5>
-              <p className="text-xl">{text}</p>
-              {/* {subtext && <p className="text-xl">{subtext}</p>} */}
-              <button className="btn-primary mt-6">{button}</button>
-            </div>
-          </section>
-        </FadeInOnScroll>
-      ))}
+    icon: <GiPartyPopper size={60} />,
+    title: "La fiesta está en marcha",
+    text: "Será una ocasión para relajarnos y disfrutar juntos, en un ambiente para todos.",
+    button: "Sugerir canción",
+    link: "https://open.spotify.com/playlist/6kJUqsTHTe80nIPJ5VD6pw?si=MX8w0kfiT66jkdaW6vDsAw&pi=zCswFsG6T_iPa&pt=574511dc913c5245a161358b2b85013b"
+  },
+  {
+    icon: <IoCameraOutline size={60} />,
+    title: "Fotos inolvidables",
+    text: "Queremos capturar cada sonrisa, cada abrazo, cada momento.",
+    button: "Sube tus fotos"
+  }
+].map(({ icon, title, text, button, link }, idx) => (
+  <FadeInOnScroll key={idx}>
+    <section key={idx} className="py-12 bg-[#faf6f3] text-center px-4">
+      <div className="flex flex-col items-center gap-4">
+        {icon}
+        <div className="bg-[#cacaca] h-[1px] w-1/3" />
+        <h5 className="text-2xl">{title}</h5>
+        <p className="text-xl">{text}</p>
+
+        {link ? (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-primary mt-6"
+          >
+            {button}
+          </a>
+        ) : (
+          <button className="btn-primary mt-6">{button}</button>
+        )}
+      </div>
+    </section>
+  </FadeInOnScroll>
+))}
+
       <FadeInOnScroll>
         <section className="grid md:grid-cols-1">
 
