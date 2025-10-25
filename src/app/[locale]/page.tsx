@@ -230,10 +230,8 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <button className="btn-primary mt-6">Agendar Fecha</button>
         </section>
       </FadeInOnScroll>
-
       {/* Ceremonia */}
       <FadeInOnScroll>
         <section className="py-12 bg-[#faf6f3]">
@@ -274,15 +272,6 @@ export default function Home() {
 
       {/* ====== FORMULARIO PARA RECIBIR CÓDIGO ====== */}
       <InviteForm onSent={(emails)=>setEmailSentTo(emails[0])} />
-
-      {/* ====== GATE PARA VERIFICAR CÓDIGO ====== */}
-      {invited === null ? (
-        <section className="py-8 text-center">
-          <p className="text-sm text-[#777]">Cargando…</p>
-        </section>
-      ) : invited === false ? (
-        <InviteGate defaultEmail={emailSentTo} onSuccess={()=>setInvited(true)} />
-      ) : null}
 
       {/* ====== SECCIONES PRIVADAS (SOLO INVITADOS) ====== */}
       {invited && (
