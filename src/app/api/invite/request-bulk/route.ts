@@ -1,93 +1,118 @@
-import { NextResponse } from 'next/server'
-import { getDb } from '@/lib/mongodb'
-import { generateCode, hashCode } from '@/lib/invite'
-import { sendInviteCodeEmail } from '@/lib/mailer'
-import { randomUUID } from 'crypto'
+// app/api/invite/request-bulk/route.ts
+export const runtime = 'nodejs';
 
-export const runtime = 'nodejs'
+import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
+import { render } from '@react-email/render';
+import { signGuestToken } from '@/lib/jwt';
+import { connectDB } from '@/lib/mongoose';
+import Invitado from '@/models/Invitado';
+import  InviteMagicLinkEmail  from '@/lib/emails';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const APP_URL = (process.env.APP_URL || 'http://localhost:3000').replace(/\/+$/, ''); // sin barra final
+const EMAIL_FROM = process.env.EMAIL_FROM || 'Romina & Sebas <noreply@romyseb.ch>';
+
+type Guest = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: number;
+  isChild?: boolean;
+  phone?: string;
+  allergies?: string;
+  dietary?: any;
+  dietaryOther?: string;
+  mobilityNeeds?: string;
+  songSuggestion?: string;
+};
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json() as {
-      household: {
-        street: string; city: string; postalCode: string; country: string
-        phone?: string; preferredLanguage?: string; contactChannel?: string; notes?: string
-      },
-      guests: Array<{
-        firstName: string; lastName: string; email: string; phone?: string
-        allergies?: string; dietary?: string; dietaryOther?: string
-        children?: boolean; mobilityNeeds?: string; songSuggestion?: string
-      }>
+    await connectDB();
+
+    const { guests } = (await req.json()) as { guests: Guest[] };
+    if (!Array.isArray(guests) || guests.length === 0) {
+      return NextResponse.json({ message: 'Guests requeridos' }, { status: 400 });
     }
 
-    // Validaciones básicas
-    if (!body?.household || !Array.isArray(body?.guests) || body.guests.length === 0) {
-      return NextResponse.json({ message: 'Datos inválidos' }, { status: 400 })
-    }
-
-    const { household, guests } = body
-    if (!household.street || !household.city || !household.postalCode || !household.country) {
-      return NextResponse.json({ message: 'Dirección incompleta' }, { status: 400 })
-    }
+    // Validación mínima
     for (const g of guests) {
-      if (!g.firstName || !g.lastName || !g.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g.email)) {
-        return NextResponse.json({ message: 'Revisa nombre, apellidos y email de cada invitado' }, { status: 400 })
+      if (!g.firstName || !g.lastName || !g.email) {
+        return NextResponse.json({ message: 'Nombre, apellidos y email requeridos.' }, { status: 400 });
+      }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g.email)) {
+        return NextResponse.json({ message: `Email inválido: ${g.email}` }, { status: 400 });
+      }
+      const ageNum = Number(g.age);
+      if (!Number.isFinite(ageNum) || ageNum < 0 || ageNum > 120) {
+        return NextResponse.json({ message: `Edad inválida para ${g.email}` }, { status: 400 });
+      }
+      if (g.isChild && ageNum >= 18) {
+        return NextResponse.json({ message: `Marcado como niño/niña con 18+ para ${g.email}` }, { status: 400 });
       }
     }
 
-    const db = await getDb()
-    const coll = db.collection('guests')
+    const results: Array<{ email: string; ok: boolean; id?: string; error?: string }> = [];
 
-    // opcional: rate limit por email (similar a lo que ya hicimos)
-    const householdId = randomUUID()
-    const now = new Date()
-
-    // genera y envía códigos a todos
     for (const g of guests) {
-      const emailLc = g.email.trim().toLowerCase()
-      const code = generateCode(6)
-      const inviteCodeHash = await hashCode(code)
+      const token = await signGuestToken({
+        email: g.email,
+        firstName: g.firstName,
+        lastName: g.lastName,
+        age: Number(g.age),
+        isChild: !!g.isChild,
+      });
 
-      await coll.updateOne(
-        { email: emailLc },
-        {
-          $set: {
-            email: emailLc,
-            firstName: g.firstName,
-            lastName: g.lastName,
-            phone: g.phone || null,
-            allergies: g.allergies || null,
-            dietary: g.dietary || 'none',
-            dietaryOther: g.dietaryOther || null,
-            children: !!g.children,
-            mobilityNeeds: g.mobilityNeeds || null,
-            songSuggestion: g.songSuggestion || null,
-            householdId,
-            address: {
-              street: household.street,
-              city: household.city,
-              postalCode: household.postalCode,
-              country: household.country,
-            },
-            householdPhone: household.phone || null,
-            preferredLanguage: household.preferredLanguage || 'es',
-            contactChannel: household.contactChannel || 'email',
-            notes: household.notes || null,
-            inviteCodeHash,
-            lastRequestAt: now,
-          },
-          $setOnInsert: { createdAt: now }
-        },
-        { upsert: true }
-      )
+      const link = `${APP_URL}/acceso?token=${encodeURIComponent(token)}`;
 
-      // Enviar email con el código
-      await sendInviteCodeEmail(emailLc, `${g.firstName} ${g.lastName}`, code)
+      // 1) Guarda/Actualiza invitado en Mongo (estado "sent")
+      //    Usamos create; si quieres permitir múltiples envíos al mismo email, deja así (índice email+token).
+      await Invitado.create({
+        firstName: g.firstName,
+        lastName: g.lastName,
+        email: g.email.toLowerCase(),
+        age: Number(g.age),
+        isChild: !!g.isChild,
+        phone: g.phone,
+        allergies: g.allergies,
+        dietary: g.dietary ?? 'none',
+        dietaryOther: g.dietaryOther,
+        mobilityNeeds: g.mobilityNeeds,
+        songSuggestion: g.songSuggestion,
+        token,
+        accessLink: link,
+        status: 'sent',
+        sentAt: new Date(),
+        used: false,
+      });
+
+      // 2) Render HTML email y enviar
+      const html = await render(InviteMagicLinkEmail({ firstName: g.firstName, link }));
+
+      const { data, error } = await resend.emails.send({
+        from: EMAIL_FROM, // remitente verificado
+        to: g.email,
+        subject: 'Tu enlace de acceso a la boda',
+        html,
+      });
+
+      if (error) {
+        console.error('Resend error', error);
+        results.push({ email: g.email, ok: false, error: String(error) });
+      } else {
+        results.push({ email: g.email, ok: true, id: data?.id });
+      }
     }
 
-    return NextResponse.json({ ok: true, householdId })
-  } catch (e) {
-    console.error(e)
-    return NextResponse.json({ message: 'Error interno' }, { status: 500 })
+    const anyFail = results.some((r) => !r.ok);
+    if (anyFail) {
+      return NextResponse.json({ message: 'Algunos correos no se pudieron enviar', results }, { status: 207 });
+    }
+
+    return NextResponse.json({ ok: true, results });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ message: 'Error procesando la solicitud' }, { status: 500 });
   }
 }
