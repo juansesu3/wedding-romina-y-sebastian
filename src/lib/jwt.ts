@@ -40,7 +40,7 @@ export interface GuestTokenPayload extends JWTPayload {
 // === Helpers ===
 export function buildAccessLink(token: string, appUrl = process.env.APP_URL || 'http://localhost:3000') {
   const base = String(appUrl).replace(/\/+$/, '')
-  return `${base}/acceso?token=${encodeURIComponent(token)}`
+  return `${base}/acces?token=${encodeURIComponent(token)}`
 }
 
 // === Firma ===
