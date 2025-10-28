@@ -3,12 +3,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { SlArrowDown } from "react-icons/sl";
 import { PiChurchThin } from "react-icons/pi";
-import { GiPartyPopper, GiTravelDress, GiWineGlass } from "react-icons/gi";
-import { CiGift } from "react-icons/ci";
-import { IoCameraOutline } from "react-icons/io5";
+import { GiWineGlass } from "react-icons/gi";
 import FadeInOnScroll from "../componentes/FadeScroll";
-import { motion } from 'framer-motion';
 import InviteForm from "../componentes/InviteForm";
+import HowToArriveModal from "../componentes/HowToArriveModal";
 
 /** =======================
  *  Componentes inline (puedes moverlos a /componentes)
@@ -130,6 +128,26 @@ function InviteGate({ defaultEmail, onSuccess }: { defaultEmail?: string; onSucc
  *  Página
  *  ======================= */
 export default function Home() {
+  const [isHowToOpen, setIsHowToOpen] = useState(false)
+
+  // Ejemplo: Finca Atlántida (ajusta dirección/coords reales)
+  const venueName = 'Finca Atlántida (Sens Restauración)'
+  const address = 'Lugar Atlántida s/n, 15800, Galicia, España' // <- cambia por tu dirección exacta
+  const destLat = 42.460423   // ej. 42.88
+  const destLng = -8.890235   // ej. -8.54
+
+  const nearCities = [
+    { name: 'Santiago de Compostela', note: 'Centro histórico', mapsQuery: 'Santiago de Compostela' },
+    { name: 'A Coruña', note: 'Costa y centro', mapsQuery: 'A Coruña' },
+    { name: 'Vigo', note: 'Zona Rías Baixas', mapsQuery: 'Vigo' },
+    { name: 'Pontevedra', note: 'Ciudad histórica y capital provincial', mapsQuery: 'Pontevedra' },]
+
+  const airports = [
+    { name: 'Santiago – Rosalía de Castro', code: 'SCQ', city: 'Santiago de Compostela' },
+    { name: 'A Coruña', code: 'LCG', city: 'A Coruña' },
+    { name: 'Vigo – Peinador', code: 'VGO', city: 'Vigo' },
+  ]
+
 
   const [invited, setInvited] = useState<boolean | null>(null);
   const [emailSentTo, setEmailSentTo] = useState<string | undefined>(undefined);
@@ -236,12 +254,35 @@ export default function Home() {
               </div>
               <h4 className="text-2xl">Ceremonia & Celebración</h4>
               <p className="text-xl">Un momento íntimo y sincero que queremos compartir con ustedes..</p>
-              <button className="btn-primary mt-4">Comó Llegar</button>
+              <button
+                className="btn-primary mt-4"
+                onClick={() => setIsHowToOpen(true)}
+              >
+                Cómo llegar
+              </button>
             </div>
           </div>
         </section>
       </FadeInOnScroll>
-
+      {/* Modal */}
+      <HowToArriveModal
+        open={isHowToOpen}
+        onClose={() => setIsHowToOpen(false)}
+        venueName={venueName}
+        address={address}
+        destLat={destLat}
+        destLng={destLng}
+        nearCities={nearCities}
+        airports={airports}
+        images={[
+          'https://my-page-negiupp.s3.amazonaws.com/1761680699512.jpg',
+          'https://my-page-negiupp.s3.amazonaws.com/1761680702588.jpg',
+          'https://my-page-negiupp.s3.amazonaws.com/1761680708051.jpg',
+          'https://my-page-negiupp.s3.amazonaws.com/1761680714088.jpg',
+          'https://my-page-negiupp.s3.amazonaws.com/1761680720352.jpg',
+        ]}
+        coverImage="https://my-page-negiupp.s3.amazonaws.com/1761680702588.jpg"
+      />
       {/* Nuestra historia */}
       <FadeInOnScroll>
         <section className="py-16 text-center">
