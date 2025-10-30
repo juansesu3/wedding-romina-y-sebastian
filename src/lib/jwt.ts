@@ -5,9 +5,9 @@ import { nanoid } from 'nanoid'
 
 // === Config ===
 const ALG = 'HS256'
-const ISSUER = 'romyseb.app'          // cámbialo si quieres
+const ISSUER = 'romyseb.ch'          // cámbialo si quieres
 const AUDIENCE = 'guest'              // “aud” esperada para enlaces de invitado
-const DEFAULT_EXP_MIN = 60 * 24 * 14  // 14 días
+const DEFAULT_EXP_MIN = 60 * 24 * 365 // 1 año
 const CLOCK_TOLERANCE_SEC = 60        // tolerancia de reloj
 
 // Carga y valida el secreto una sola vez
@@ -38,9 +38,18 @@ export interface GuestTokenPayload extends JWTPayload {
 }
 
 // === Helpers ===
-export function buildAccessLink(token: string, appUrl = process.env.APP_URL || 'http://localhost:3000') {
+export function buildAccessLink(token: string, appUrl = process.env.APP_URL || 'https://romyseb.ch') {
   const base = String(appUrl).replace(/\/+$/, '')
   return `${base}/acces?token=${encodeURIComponent(token)}`
+}
+
+function errorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message
+  try {
+    return JSON.stringify(err)
+  } catch {
+    return 'Token inválido'
+  }
 }
 
 // === Firma ===
@@ -87,11 +96,9 @@ export async function verifyGuestToken(token: string): Promise<
     if (typeof payload.email !== 'string' || !payload.email.includes('@')) {
       return { ok: false, error: 'Payload inválido: email' }
     }
-    // (Opcional) fuerza campos esperados si los usas en /acceso
-    // if (!payload.groupId || !payload.role) { ... }
 
     return { ok: true, payload: payload as GuestTokenPayload }
-  } catch (e: any) {
-    return { ok: false, error: e?.message || 'Token inválido' }
+  } catch (e: unknown) {
+    return { ok: false, error: errorMessage(e) }
   }
 }

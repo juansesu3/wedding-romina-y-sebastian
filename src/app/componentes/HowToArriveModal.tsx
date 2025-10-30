@@ -121,7 +121,7 @@ export default function HowToArriveModal({
         {/* Contenedor scrollable con momentum scroll en iOS y sin scroll-bleed */}
         <div
           className="flex flex-col h-full overflow-y-auto overscroll-contain"
-          style={{ WebkitOverflowScrolling: 'touch' as any }}
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {/* Handle para arrastrar/cerrar en móvil */}
           <div className="sm:hidden grid place-items-center py-2">

@@ -11,7 +11,7 @@ import InviteMagicLinkEmail from '@/lib/emails'
 import { signGuestToken, buildAccessLink } from '@/lib/jwt'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const APP_URL = (process.env.APP_URL || 'http://localhost:3000').replace(/\/+$/, '')
+const APP_URL = (process.env.APP_URL || 'https://romyseb.ch').replace(/\/+$/, '')
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Romina & Sebas <contact@romyseb.ch>'
 
 type GroupInput = {
@@ -32,7 +32,7 @@ type GuestInput = {
   isChild?: boolean
   phone?: string
   allergies?: string
-  dietary?: any
+  dietary?: string
   dietaryOther?: string
   mobilityNeeds?: string
   songSuggestion?: string
@@ -171,9 +171,9 @@ export async function POST(req: Request) {
         })
         if (error) throw new Error(String(error))
         return { email: m.targetEmail, ok: true }
-      } catch (e: any) {
-        console.error('[request-bulk] email error →', m.targetEmail, e?.message)
-        return { email: m.targetEmail, ok: false, error: e?.message || 'error' }
+      } catch (e:  unknown) {
+        console.error('[request-bulk] email error →', m.targetEmail, (e as Error)?.message)
+        return { email: m.targetEmail, ok: false, error: (e instanceof Error ? e.message : 'error') }
       }
     })
     const results = await Promise.all(sendOps)

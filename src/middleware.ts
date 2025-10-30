@@ -20,8 +20,8 @@ const pathname = req.nextUrl.pathname
 
 
 // Coincide rutas protegidas del portal
-const protectedLocalized = /^\/(es|fr|en|de|it)\/invitation(?:\/.*)?$/
-const protectedUnlocalized = /^\/invitation(?:\/.*)?$/
+const protectedLocalized = /^\/(es|fr|en|de|it)\/(invitacion|invitation)(?:\/.*)?$/
+const protectedUnlocalized = /^\/(invitacion|invitation)(?:\/.*)?$/
 
 
 // Si la ruta no está localizada aún (p.ej. /invitacion), dejamos que next-intl haga su redirect

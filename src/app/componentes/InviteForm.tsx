@@ -1,4 +1,6 @@
+// ./src/app/componentes/InviteForm.tsx
 'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { Lora } from 'next/font/google'
 
@@ -21,10 +23,31 @@ type GuestInput = {
   isChild?: boolean
   phone?: string
   allergies?: string
-  dietary?: 'none' | 'vegetarian' | 'vegan' | 'pescatarian' | 'gluten_free' | 'halal' | 'kosher' | 'no_pork' | 'no_alcohol' | 'other'
+  dietary?:
+    | 'none'
+    | 'vegetarian'
+    | 'vegan'
+    | 'pescatarian'
+    | 'gluten_free'
+    | 'halal'
+    | 'kosher'
+    | 'no_pork'
+    | 'no_alcohol'
+    | 'other'
   dietaryOther?: string
   mobilityNeeds?: string
   songSuggestion?: string
+}
+
+
+
+// Type guard sencillo para extraer `message` sin usar `any`
+function extractMessage(d: unknown): string | undefined {
+  if (d && typeof d === 'object' && 'message' in d) {
+    const m = (d as Record<string, unknown>).message
+    return typeof m === 'string' ? m : undefined
+  }
+  return undefined
 }
 
 export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => void }) {
@@ -34,10 +57,14 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
     try {
       const raw = localStorage.getItem('rsvp:sent')
       if (raw) setAlreadySent(true)
-    } catch {}
+    } catch {
+      /* ignore */
+    }
   }, [])
 
-  const [primary, setPrimary] = useState<Required<Pick<GuestInput, 'firstName' | 'lastName' | 'email'>> & Omit<GuestInput, 'email'>>({
+  const [primary, setPrimary] = useState<
+    Required<Pick<GuestInput, 'firstName' | 'lastName' | 'email'>> & Omit<GuestInput, 'email'>
+  >({
     firstName: '',
     lastName: '',
     email: '',
@@ -96,7 +123,9 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     if (loading) return
-    setLoading(true); setErr(null); setMsg(null)
+    setLoading(true)
+    setErr(null)
+    setMsg(null)
 
     // Gate local: si ya enviaste, evita doble envío
     if (alreadySent) {
@@ -108,33 +137,40 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
     // Validación contacto principal
     if (!primary.firstName || !primary.lastName || !validEmail(primary.email)) {
       setErr('Revisa nombre, apellidos y correo del contacto principal.')
-      setLoading(false); return
+      setLoading(false)
+      return
     }
     if (!validAge(primary.age)) {
       setErr('Indica una edad válida (0 a 120) para el contacto principal.')
-      setLoading(false); return
+      setLoading(false)
+      return
     }
     if (primary.isChild && Number(primary.age) >= 18) {
       setErr('El contacto principal no puede ser “niño/niña” con edad 18 o más.')
-      setLoading(false); return
+      setLoading(false)
+      return
     }
     // Validación acompañantes
     for (const g of companions) {
       if (!g.firstName || !g.lastName) {
         setErr('Cada acompañante debe tener nombre y apellidos.')
-        setLoading(false); return
+        setLoading(false)
+        return
       }
       if (!validAge(g.age)) {
         setErr('Indica una edad válida (0 a 120) para cada acompañante.')
-        setLoading(false); return
+        setLoading(false)
+        return
       }
       if (g.isChild && Number(g.age) >= 18) {
         setErr('Marcaste “niño/niña” con edad 18 o más en un acompañante. Corrige la edad o desmarca la opción.')
-        setLoading(false); return
+        setLoading(false)
+        return
       }
       if (g.email && !validEmail(g.email)) {
         setErr(`El correo de ${g.firstName} ${g.lastName} no es válido.`)
-        setLoading(false); return
+        setLoading(false)
+        return
       }
     }
 
@@ -159,7 +195,7 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
         role: 'companion' as const,
         firstName: g.firstName,
         lastName: g.lastName,
-        targetEmail: validEmail(g.email) ? g.email! : primary.email, // fallback al contacto
+        targetEmail: validEmail(g.email) ? (g.email as string) : primary.email, // fallback al contacto
         originalGuestEmail: g.email || null,
         age: Number(g.age),
         isChild: !!g.isChild,
@@ -192,23 +228,38 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      const data = await res.json().catch(() => ({} as any))
+
+      let data: unknown
+      try {
+        data = await res.json()
+      } catch {
+        data = {}
+      }
 
       if (res.ok) {
+        // Si quieres leer fields conocidos:
+        // const okData = data as BulkResponseOk
         setProgress(100)
+
         const recipientList = normalizedGuests.map((g) => g.targetEmail)
         setMsg('¡Gracias! Enviamos los enlaces de acceso al correo indicado.')
         try {
-          localStorage.setItem('rsvp:sent', JSON.stringify({
-            contactEmail: primary.email,
-            recipients: recipientList,
-            at: Date.now(),
-          }))
+          localStorage.setItem(
+            'rsvp:sent',
+            JSON.stringify({
+              contactEmail: primary.email,
+              recipients: recipientList,
+              at: Date.now(),
+            })
+          )
           setAlreadySent(true)
-        } catch {}
+        } catch {
+          /* ignore */
+        }
         onSent?.(recipientList)
       } else {
-        setErr(data?.message || 'No pudimos procesar el formulario. Intenta nuevamente en unos minutos.')
+        const message = extractMessage(data) || 'No pudimos procesar el formulario. Intenta nuevamente en unos minutos.'
+        setErr(message)
       }
     } catch {
       setErr('Ocurrió un error de red. Intenta nuevamente.')
@@ -223,7 +274,8 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
         <div className="max-w-3xl mx-auto rounded-2xl p-6 shadow bg-white text-center">
           <h3 className="text-2xl mb-2">¡Formulario enviado!</h3>
           <p className="text-sm text-[#666]">
-            Revisa tu bandeja de entrada. Si no encuentras el correo, mira en <strong>Spam</strong> o <strong>Promociones</strong>.
+            Revisa tu bandeja de entrada. Si no encuentras el correo, mira en <strong>Spam</strong> o{' '}
+            <strong>Promociones</strong>.
           </p>
         </div>
       </section>
@@ -252,38 +304,74 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
             </div>
 
             <div className="grid md:grid-cols-2 gap-3">
-              <input className={fieldBase} placeholder="Nombre" value={primary.firstName}
-                     onChange={(e) => updatePrimary('firstName', e.target.value)} disabled={loading} />
-              <input className={fieldBase} placeholder="Apellidos" value={primary.lastName}
-                     onChange={(e) => updatePrimary('lastName', e.target.value)} disabled={loading} />
+              <input
+                className={fieldBase}
+                placeholder="Nombre"
+                value={primary.firstName}
+                onChange={(e) => updatePrimary('firstName', e.target.value)}
+                disabled={loading}
+              />
+              <input
+                className={fieldBase}
+                placeholder="Apellidos"
+                value={primary.lastName}
+                onChange={(e) => updatePrimary('lastName', e.target.value)}
+                disabled={loading}
+              />
 
-              <input className={fieldBase} placeholder="Tu correo (recibirás el enlace)"
-                     value={primary.email} onChange={(e) => updatePrimary('email', e.target.value)} disabled={loading} />
+              <input
+                className={fieldBase}
+                placeholder="Tu correo (recibirás el enlace)"
+                value={primary.email}
+                onChange={(e) => updatePrimary('email', e.target.value)}
+                disabled={loading}
+              />
 
-              <input className={fieldBase} placeholder="Tu teléfono (opcional)"
-                     value={primary.phone || ''} onChange={(e) => updatePrimary('phone', e.target.value)} disabled={loading} />
+              <input
+                className={fieldBase}
+                placeholder="Tu teléfono (opcional)"
+                value={primary.phone || ''}
+                onChange={(e) => updatePrimary('phone', e.target.value)}
+                disabled={loading}
+              />
 
               <div className="grid grid-cols-2 gap-3 md:col-span-2">
-                <input type="number" min={0} max={120} className={fieldBase}
-                       placeholder={primary.isChild ? 'Edad del niño/niña' : 'Edad'}
-                       value={primary.age}
-                       onChange={(e) => updatePrimary('age', e.target.value === '' ? '' : Number(e.target.value))}
-                       disabled={loading} />
+                <input
+                  type="number"
+                  min={0}
+                  max={120}
+                  className={fieldBase}
+                  placeholder={primary.isChild ? 'Edad del niño/niña' : 'Edad'}
+                  value={primary.age}
+                  onChange={(e) => updatePrimary('age', e.target.value === '' ? '' : Number(e.target.value))}
+                  disabled={loading}
+                />
                 <label className="flex items-center gap-2 border rounded-xl px-3">
-                  <input type="checkbox" checked={!!primary.isChild}
-                         onChange={(e) => updatePrimary('isChild', e.target.checked)} disabled={loading} />
+                  <input
+                    type="checkbox"
+                    checked={!!primary.isChild}
+                    onChange={(e) => updatePrimary('isChild', e.target.checked)}
+                    disabled={loading}
+                  />
                   ¿Eres niño/niña?
                 </label>
               </div>
 
-              <input className={fieldBase + ' md:col-span-2'} placeholder="Alergias (si aplica)"
-                     value={primary.allergies || ''} onChange={(e) => updatePrimary('allergies', e.target.value)}
-                     disabled={loading} />
+              <input
+                className={fieldBase + ' md:col-span-2'}
+                placeholder="Alergias (si aplica)"
+                value={primary.allergies || ''}
+                onChange={(e) => updatePrimary('allergies', e.target.value)}
+                disabled={loading}
+              />
 
               <div className="grid grid-cols-2 gap-3 md:col-span-2">
-                <select className={fieldBase} value={primary.dietary || 'none'}
-                        onChange={(e) => updatePrimary('dietary', e.target.value as GuestInput['dietary'])}
-                        disabled={loading}>
+                <select
+                  className={fieldBase}
+                  value={primary.dietary || 'none'}
+                  onChange={(e) => updatePrimary('dietary', e.target.value as GuestInput['dietary'])}
+                  disabled={loading}
+                >
                   <option value="none">Sin restricciones</option>
                   <option value="vegetarian">Vegetariano</option>
                   <option value="vegan">Vegano</option>
@@ -297,20 +385,31 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
                 </select>
 
                 {primary.dietary === 'other' && (
-                  <input className={fieldBase} placeholder="Especifica la dieta"
-                         value={primary.dietaryOther || ''}
-                         onChange={(e) => updatePrimary('dietaryOther', e.target.value)}
-                         disabled={loading} />
+                  <input
+                    className={fieldBase}
+                    placeholder="Especifica la dieta"
+                    value={primary.dietaryOther || ''}
+                    onChange={(e) => updatePrimary('dietaryOther', e.target.value)}
+                    disabled={loading}
+                  />
                 )}
               </div>
 
               <div className="grid md:grid-cols-2 gap-3 md:col-span-2">
-                <input className={fieldBase} placeholder="Necesidades de movilidad / accesibilidad (opcional)"
-                       value={primary.mobilityNeeds || ''} onChange={(e) => updatePrimary('mobilityNeeds', e.target.value)}
-                       disabled={loading} />
-                <input className={fieldBase} placeholder="Canción que te gustaría oír (opcional)"
-                       value={primary.songSuggestion || ''} onChange={(e) => updatePrimary('songSuggestion', e.target.value)}
-                       disabled={loading} />
+                <input
+                  className={fieldBase}
+                  placeholder="Necesidades de movilidad / accesibilidad (opcional)"
+                  value={primary.mobilityNeeds || ''}
+                  onChange={(e) => updatePrimary('mobilityNeeds', e.target.value)}
+                  disabled={loading}
+                />
+                <input
+                  className={fieldBase}
+                  placeholder="Canción que te gustaría oír (opcional)"
+                  value={primary.songSuggestion || ''}
+                  onChange={(e) => updatePrimary('songSuggestion', e.target.value)}
+                  disabled={loading}
+                />
               </div>
             </div>
           </div>
@@ -321,17 +420,28 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
               <h4 className="text-xl font-semibold">Preferencias</h4>
             </div>
             <div className="grid md:grid-cols-2 gap-3">
-              <select className={fieldBase} value={group.preferredLanguage || 'es'}
-                      onChange={(e) => setGroup((g) => ({ ...g, preferredLanguage: e.target.value as GroupInfo['preferredLanguage'] }))}
-                      disabled={loading}>
+              <select
+                className={fieldBase}
+                value={group.preferredLanguage || 'es'}
+                onChange={(e) =>
+                  setGroup((g) => ({ ...g, preferredLanguage: e.target.value as GroupInfo['preferredLanguage'] }))
+                }
+                disabled={loading}
+              >
                 <option value="es">Español</option>
                 <option value="fr">Français</option>
                 <option value="en">English</option>
                 <option value="de">Deutsch</option>
                 <option value="it">Italiano</option>
               </select>
-              <textarea className={`${fieldBase} md:col-span-1`} placeholder="Notas para la pareja (opcional)" rows={3}
-                        value={group.notes || ''} onChange={(e) => setGroup((g) => ({ ...g, notes: e.target.value }))} disabled={loading} />
+              <textarea
+                className={`${fieldBase} md:col-span-1`}
+                placeholder="Notas para la pareja (opcional)"
+                rows={3}
+                value={group.notes || ''}
+                onChange={(e) => setGroup((g) => ({ ...g, notes: e.target.value }))}
+                disabled={loading}
+              />
             </div>
           </div>
 
@@ -349,36 +459,76 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
                 {companions.map((g, idx) => (
                   <div key={idx} className="border rounded-2xl p-4">
                     <div className="grid md:grid-cols-2 gap-3">
-                      <input className={fieldBase} placeholder="Nombre"
-                             value={g.firstName} onChange={(e) => updateCompanion(idx, { firstName: e.target.value })} disabled={loading} />
-                      <input className={fieldBase} placeholder="Apellidos"
-                             value={g.lastName} onChange={(e) => updateCompanion(idx, { lastName: e.target.value })} disabled={loading} />
+                      <input
+                        className={fieldBase}
+                        placeholder="Nombre"
+                        value={g.firstName}
+                        onChange={(e) => updateCompanion(idx, { firstName: e.target.value })}
+                        disabled={loading}
+                      />
+                      <input
+                        className={fieldBase}
+                        placeholder="Apellidos"
+                        value={g.lastName}
+                        onChange={(e) => updateCompanion(idx, { lastName: e.target.value })}
+                        disabled={loading}
+                      />
 
-                      <input className={fieldBase} placeholder="Correo del acompañante (opcional)"
-                             value={g.email || ''} onChange={(e) => updateCompanion(idx, { email: e.target.value })} disabled={loading} />
+                      <input
+                        className={fieldBase}
+                        placeholder="Correo del acompañante (opcional)"
+                        value={g.email || ''}
+                        onChange={(e) => updateCompanion(idx, { email: e.target.value })}
+                        disabled={loading}
+                      />
 
                       <div className="grid grid-cols-2 gap-3">
-                        <input type="number" min={0} max={120} className={fieldBase}
-                               placeholder={g.isChild ? 'Edad del niño/niña' : 'Edad'}
-                               value={g.age} onChange={(e) => updateCompanion(idx, { age: e.target.value === '' ? '' : Number(e.target.value) })}
-                               disabled={loading} />
+                        <input
+                          type="number"
+                          min={0}
+                          max={120}
+                          className={fieldBase}
+                          placeholder={g.isChild ? 'Edad del niño/niña' : 'Edad'}
+                          value={g.age}
+                          onChange={(e) =>
+                            updateCompanion(idx, { age: e.target.value === '' ? '' : Number(e.target.value) })
+                          }
+                          disabled={loading}
+                        />
                         <label className="flex items-center gap-2 border rounded-xl px-3">
-                          <input type="checkbox" checked={!!g.isChild}
-                                 onChange={(e) => updateCompanion(idx, { isChild: e.target.checked })} disabled={loading} />
+                          <input
+                            type="checkbox"
+                            checked={!!g.isChild}
+                            onChange={(e) => updateCompanion(idx, { isChild: e.target.checked })}
+                            disabled={loading}
+                          />
                           ¿Es niño/niña?
                         </label>
                       </div>
 
-                      <input className={fieldBase} placeholder="Teléfono (opcional)"
-                             value={g.phone || ''} onChange={(e) => updateCompanion(idx, { phone: e.target.value })} disabled={loading} />
+                      <input
+                        className={fieldBase}
+                        placeholder="Teléfono (opcional)"
+                        value={g.phone || ''}
+                        onChange={(e) => updateCompanion(idx, { phone: e.target.value })}
+                        disabled={loading}
+                      />
 
-                      <input className={fieldBase + ' md:col-span-2'} placeholder="Alergias (si aplica)"
-                             value={g.allergies || ''} onChange={(e) => updateCompanion(idx, { allergies: e.target.value })} disabled={loading} />
+                      <input
+                        className={fieldBase + ' md:col-span-2'}
+                        placeholder="Alergias (si aplica)"
+                        value={g.allergies || ''}
+                        onChange={(e) => updateCompanion(idx, { allergies: e.target.value })}
+                        disabled={loading}
+                      />
 
                       <div className="grid grid-cols-2 gap-3 md:col-span-2">
-                        <select className={fieldBase} value={g.dietary || 'none'}
-                                onChange={(e) => updateCompanion(idx, { dietary: e.target.value as GuestInput['dietary'] })}
-                                disabled={loading}>
+                        <select
+                          className={fieldBase}
+                          value={g.dietary || 'none'}
+                          onChange={(e) => updateCompanion(idx, { dietary: e.target.value as GuestInput['dietary'] })}
+                          disabled={loading}
+                        >
                           <option value="none">Sin restricciones</option>
                           <option value="vegetarian">Vegetariano</option>
                           <option value="vegan">Vegano</option>
@@ -392,24 +542,41 @@ export default function InviteForm({ onSent }: { onSent?: (emails: string[]) => 
                         </select>
 
                         {g.dietary === 'other' && (
-                          <input className={fieldBase} placeholder="Especifica la dieta"
-                                 value={g.dietaryOther || ''} onChange={(e) => updateCompanion(idx, { dietaryOther: e.target.value })}
-                                 disabled={loading} />
+                          <input
+                            className={fieldBase}
+                            placeholder="Especifica la dieta"
+                            value={g.dietaryOther || ''}
+                            onChange={(e) => updateCompanion(idx, { dietaryOther: e.target.value })}
+                            disabled={loading}
+                          />
                         )}
                       </div>
 
                       <div className="grid md:grid-cols-2 gap-3 md:col-span-2">
-                        <input className={fieldBase} placeholder="Necesidades de movilidad / accesibilidad (opcional)"
-                               value={g.mobilityNeeds || ''} onChange={(e) => updateCompanion(idx, { mobilityNeeds: e.target.value })}
-                               disabled={loading} />
-                        <input className={fieldBase} placeholder="Canción que le gustaría oír (opcional)"
-                               value={g.songSuggestion || ''} onChange={(e) => updateCompanion(idx, { songSuggestion: e.target.value })}
-                               disabled={loading} />
+                        <input
+                          className={fieldBase}
+                          placeholder="Necesidades de movilidad / accesibilidad (opcional)"
+                          value={g.mobilityNeeds || ''}
+                          onChange={(e) => updateCompanion(idx, { mobilityNeeds: e.target.value })}
+                          disabled={loading}
+                        />
+                        <input
+                          className={fieldBase}
+                          placeholder="Canción que le gustaría oír (opcional)"
+                          value={g.songSuggestion || ''}
+                          onChange={(e) => updateCompanion(idx, { songSuggestion: e.target.value })}
+                          disabled={loading}
+                        />
                       </div>
                     </div>
 
                     <div className="text-right mt-3">
-                      <button type="button" onClick={() => removeCompanion(idx)} disabled={loading} className="text-sm underline">
+                      <button
+                        type="button"
+                        onClick={() => removeCompanion(idx)}
+                        disabled={loading}
+                        className="text-sm underline"
+                      >
                         Quitar acompañante
                       </button>
                     </div>
