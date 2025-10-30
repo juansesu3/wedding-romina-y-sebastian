@@ -14,6 +14,13 @@ const lora = Lora({
 
 type NearCity = { name: string; note?: string; mapsQuery?: string }
 type Airport = { name: string; code: string; city?: string; note?: string }
+type Advisor = {
+  name: string
+  role?: string
+  phone?: string
+  email?: string
+  note?: string // ej. "Habla español / inglés"
+}
 
 export default function HowToArriveModal({
   open,
@@ -26,6 +33,7 @@ export default function HowToArriveModal({
   airports = [],
   images = [],
   coverImage,
+  advisor,
 }: {
   open: boolean
   onClose: () => void
@@ -37,6 +45,7 @@ export default function HowToArriveModal({
   airports?: Airport[]
   images?: string[]
   coverImage?: string
+  advisor?: Advisor
 }) {
   const [origin, setOrigin] = useState<string>('')
   const [locAllowed, setLocAllowed] = useState<boolean | null>(null)
@@ -96,7 +105,7 @@ export default function HowToArriveModal({
 
   return (
     <div
-      className={`fixed inset-0 z-[999] flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-6 ${lora.variable} font-sans `}
+      className={`fixed inset-0 z-[999] flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-2 ${lora.variable} font-sans `}
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -106,7 +115,7 @@ export default function HowToArriveModal({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
         // 📱 Full-height en móvil con scroll interno; auto en desktop
-        className="w-full sm:max-w-3xl bg-white rounded-t-2xl sm:rounded-3xl shadow-2xl overflow-hidden h-[100dvh] sm:h-auto sm:max-h-[90dvh]"
+        className="w-full sm:max-w-3xl bg-white rounded-t-2xl sm:rounded-3xl shadow-2xl overflow-hidden h-[100dvh] sm:max-h-[90dvh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Contenedor scrollable con momentum scroll en iOS y sin scroll-bleed */}
@@ -138,7 +147,7 @@ export default function HowToArriveModal({
           </div>
 
           {/* CONTENIDO */}
-          <div className="p-6 sm:p-8 space-y-8 text-center pb-[calc(env(safe-area-inset-bottom,0)+16px)]">
+          <div className="p-4  space-y-8 text-center pb-[calc(env(safe-area-inset-bottom,0)+16px)]">
             {/* Título + dirección */}
             <div>
               <h3 className="font-[family-name:var(--font-lora)] text-2xl sm:text-3xl leading-tight">Cómo llegar</h3>
@@ -146,7 +155,7 @@ export default function HowToArriveModal({
               <p className="text-gray-700">{address}</p>
             </div>
 
-            {/* MAPA INTERACTIVO (altura responsive) */}
+            {/* MAPA INTERACTIVO */}
             <div className="rounded-2xl overflow-hidden border shadow-sm">
               <iframe
                 src={mapSrc}
@@ -230,6 +239,48 @@ export default function HowToArriveModal({
               )}
             </div>
 
+            {/* ASESOR TURÍSTICO / ASISTENCIA */}
+            {advisor && (
+              <div className="rounded-2xl border p-4 text-left bg-[#faf9f7]">
+                <p className="font-medium mb-1">Asistencia / Turismo</p>
+                <p className="text-sm leading-6">
+                  <span className="font-medium">{advisor.name}</span>
+                  {advisor.role ? <span className="text-gray-600"> — {advisor.role}</span> : null}
+                  {advisor.note ? <span className="text-gray-500"> · {advisor.note}</span> : null}
+                </p>
+
+                <div className="mt-2 text-sm leading-6 space-y-1">
+                  {advisor.phone && (
+                    <p>
+                      Tel:{' '}
+                      <a
+                        href={`tel:${advisor.phone.replace(/\s+/g, '')}`}
+                        className="underline underline-offset-2"
+                      >
+                        {advisor.phone}
+                      </a>
+                    </p>
+                  )}
+
+                  {advisor.email && (
+                    <p>
+                      Email:{' '}
+                      <a
+                        href={`mailto:${advisor.email}`}
+                        className="underline underline-offset-2 break-all"
+                      >
+                        {advisor.email}
+                      </a>
+                    </p>
+                  )}
+                </div>
+
+                <p className="text-[13px] text-gray-500 mt-3">
+                  Si necesitas ayuda con alojamiento o transporte local, puedes contactarla directamente.
+                </p>
+              </div>
+            )}
+
             {/* PLANIFICADOR */}
             <div className="border rounded-2xl p-4 sm:p-5 space-y-3 text-left">
               <p className="font-medium text-center sm:text-left">Planificar ruta</p>
@@ -262,7 +313,9 @@ export default function HowToArriveModal({
                 </a>
               </div>
               {locAllowed === false && (
-                <p className="text-xs text-red-600">No pudimos acceder a tu ubicación. Escribe una dirección arriba.</p>
+                <p className="text-xs text-red-600">
+                  No pudimos acceder a tu ubicación. Escribe una dirección arriba.
+                </p>
               )}
               <p className="text-[13px] text-gray-500">
                 Tip: Si escribes tu origen como <code>lat,lng</code> (ej. <code>42.8782,-8.5448</code>) la ruta será más precisa.

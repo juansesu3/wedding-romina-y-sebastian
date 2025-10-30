@@ -282,6 +282,13 @@ export default function Home() {
           'https://my-page-negiupp.s3.amazonaws.com/1761680720352.jpg',
         ]}
         coverImage="https://my-page-negiupp.s3.amazonaws.com/1761680702588.jpg"
+        advisor={{
+          name: 'Gladys Salamin',
+          role: 'Asesora de turismo',
+          phone: '+41 79 239 96 80',
+          email: 'gladys.salamin@tui.ch',
+          note: 'Habla frances e inglés',
+        }}
       />
       {/* Nuestra historia */}
       <FadeInOnScroll>
