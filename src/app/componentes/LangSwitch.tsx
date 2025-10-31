@@ -55,7 +55,7 @@ export default function LangSwitch({
       role="tablist"
       aria-label={ariaLabel}
       className={clsx(
-        'inline-flex items-center rounded-xl border bg-white/90 backdrop-blur px-1 py-1 shadow-sm',
+        'inline-flex items-center rounded-xl  bg-white/90 backdrop-blur px-1 py-1 shadow-sm',
         'ring-1 ring-black/5',
         className
       )}
@@ -70,7 +70,7 @@ export default function LangSwitch({
             aria-selected={active}
             onClick={() => !active && go(loc)}
             className={clsx(
-              'min-w-[42px] px-3 py-1.5 text-sm rounded-lg transition',
+              'min-w-[42px] px-3 py-.5 text-sm rounded-lg transition',
               active
                 ? 'bg-[#d49e7a] text-white shadow'
                 : 'text-gray-700 hover:bg-black/5'

@@ -13,22 +13,25 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const {locale} = await params
   const base = new URL(process.env.APP_URL ?? 'https://romyseb.ch')
+  const metadataBase = new URL(base)
 
+  // Elige imagen por idioma (o usa una sola)
+  const ogImage = locale === 'fr' ? '/og-fr.jpg' : '/og-es.jpg'
   const titleBase =
     locale === 'fr'
-      ? 'Romina & Sebas — Mariage 2026'
-      : 'Romina & Sebas — Boda 2026'
+      ? 'Romi & Sebas — Mariage 2026'
+      : 'Romi & Sebas — Boda 2026'
 
   const description =
     locale === 'fr'
-      ? 'Invitation de mariage de Romina et Sebas — 25 juin 2026 à la Finca Atlántida (Galice). Détails, accès, dress code, playlist et photos.'
-      : 'Invitación de boda de Romina y Sebas — 25 de junio de 2026 en Finca Atlántida (Galicia). Detalles, cómo llegar, dress code, playlist y fotos.'
+      ? 'Invitation de mariage de Romi et Sebas — 25 juin 2026 à la Finca Atlántida (Galice). Détails, accès, dress code, playlist et photos.'
+      : 'Invitación de boda de Romi y Sebas — 25 de junio de 2026 en Finca Atlántida (Galicia). Detalles, cómo llegar, dress code, playlist y fotos.'
 
   return {
     metadataBase: base,
     title: {
       default: titleBase,
-      template: `%s | Romina & Sebas`
+      template: `%s | Romi & Sebas`
     },
     description,
     alternates: {
@@ -51,13 +54,13 @@ export async function generateMetadata(
       description,
       images: [
         {
-          url: '/og/cover.jpg',
+          url: new URL(ogImage, metadataBase).toString(),
           width: 1200,
           height: 630,
           alt:
             locale === 'fr'
-              ? 'Romina et Sebas à la Finca Atlántida, Galice'
-              : 'Romina y Sebas en Finca Atlántida, Galicia'
+              ? 'Romi et Sebas à la Finca Atlántida, Galice'
+              : 'Romi y Sebas en Finca Atlántida, Galicia'
         }
       ]
     },
@@ -92,7 +95,7 @@ export default async function LocaleLayout({
       <body>
         <FixHydra>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            <div className="fixed right-4 top-4 z-[1100]">
+            <div className="fixed left-2 top-2 z-[1100]">
               <LangSwitch supportedLocales={routing.locales} showLocales={['es','fr']} />
             </div>
             <SeoJsonLd />
