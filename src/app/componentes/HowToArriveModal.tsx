@@ -12,6 +12,9 @@ const lora = Lora({
   variable: '--font-lora',
 })
 
+// Usaremos Lora solo para cuerpo de texto (no headings)
+const bodyFont = 'font-[family-name:var(--font-lora)]'
+
 type NearCity = { name: string; note?: string; mapsQuery?: string }
 type Airport = { name: string; code: string; city?: string; note?: string }
 type Advisor = {
@@ -105,7 +108,7 @@ export default function HowToArriveModal({
 
   return (
     <div
-      className={`fixed inset-0 z-[999] flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-2 ${lora.variable} font-sans `}
+      className={`fixed inset-0 z-[999] flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-2 ${lora.variable}`}
       role="dialog"
       aria-modal="true"
       onClick={onClose}
@@ -140,19 +143,20 @@ export default function HowToArriveModal({
             <button
               onClick={onClose}
               aria-label="Cerrar"
-              className="absolute right-3 top-3 rounded-xl bg-white/90 px-3 py-1.5 text-sm shadow hover:bg-white"
+              className={`absolute right-3 top-3 rounded-xl bg-white/90 px-3 py-1.5 text-sm shadow hover:bg-white ${bodyFont}`}
             >
               Cerrar
             </button>
           </div>
 
           {/* CONTENIDO */}
-          <div className="p-4  space-y-8 text-center pb-[calc(env(safe-area-inset-bottom,0)+16px)]">
+          <div className="p-4 space-y-8 text-center pb-[calc(env(safe-area-inset-bottom,0)+16px)]">
             {/* Título + dirección */}
             <div>
-              <h3 className="font-[family-name:var(--font-lora)] text-2xl sm:text-3xl leading-tight">Cómo llegar</h3>
-              <p className="mt-2 text-sm uppercase tracking-wide text-[#b08968]">{venueName}</p>
-              <p className="text-gray-700">{address}</p>
+              {/* h3 → mantiene TU fuente de headings (sin Lora) */}
+              <h3 className="text-2xl sm:text-3xl leading-tight">Cómo llegar</h3>
+              <p className={`mt-2 text-sm uppercase tracking-wide text-[#b08968] ${bodyFont}`}>{venueName}</p>
+              <p className={`text-gray-700 ${bodyFont}`}>{address}</p>
             </div>
 
             {/* MAPA INTERACTIVO */}
@@ -170,7 +174,7 @@ export default function HowToArriveModal({
             {/* GALERÍA */}
             {images.length > 0 && (
               <div className="space-y-3">
-                <p className="text-sm text-gray-500">Un vistazo a la finca</p>
+                <p className={`text-sm text-gray-500 ${bodyFont}`}>Un vistazo a la finca</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {images.slice(0, 6).map((src, i) => (
                     <motion.div
@@ -198,7 +202,7 @@ export default function HowToArriveModal({
             <div className="grid sm:grid-cols-2 gap-6 text-left">
               {/* Ciudades cercanas */}
               {nearCities.length > 0 && (
-                <div className="rounded-2xl border p-4">
+                <div className={`rounded-2xl border p-4 ${bodyFont}`}>
                   <p className="font-medium mb-2">Ciudades cercanas</p>
                   <ul className="space-y-1 text-sm leading-6">
                     {nearCities.map((c, i) => (
@@ -224,7 +228,7 @@ export default function HowToArriveModal({
 
               {/* Aeropuertos cercanos */}
               {airports.length > 0 && (
-                <div className="rounded-2xl border p-4">
+                <div className={`rounded-2xl border p-4 ${bodyFont}`}>
                   <p className="font-medium mb-2">Aeropuertos cercanos</p>
                   <ul className="space-y-1 text-sm leading-6">
                     {airports.map((a, i) => (
@@ -241,7 +245,7 @@ export default function HowToArriveModal({
 
             {/* ASESOR TURÍSTICO / ASISTENCIA */}
             {advisor && (
-              <div className="rounded-2xl border p-4 text-left bg-[#faf9f7]">
+              <div className={`rounded-2xl border p-4 text-left bg-[#faf9f7] ${bodyFont}`}>
                 <p className="font-medium mb-1">Asistencia / Turismo</p>
                 <p className="text-sm leading-6">
                   <span className="font-medium">{advisor.name}</span>
@@ -282,7 +286,7 @@ export default function HowToArriveModal({
             )}
 
             {/* PLANIFICADOR */}
-            <div className="border rounded-2xl p-4 sm:p-5 space-y-3 text-left">
+            <div className={`border rounded-2xl p-4 sm:p-5 space-y-3 text-left ${bodyFont}`}>
               <p className="font-medium text-center sm:text-left">Planificar ruta</p>
               <div className="grid sm:grid-cols-[1fr_auto_auto] gap-3">
                 <input

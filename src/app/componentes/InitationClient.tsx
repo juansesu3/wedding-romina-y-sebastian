@@ -1,4 +1,4 @@
-// app/[locale]/invitacion/parts/InvitacionClient.tsx — Client Component (UI + animaciones)
+// app/[locale]/invitacion/parts/InvitacionClient.tsx
 'use client'
 
 import Image from 'next/image'
@@ -14,6 +14,18 @@ import HowToArriveModal from './HowToArriveModal'
 import SuggestSongModal from './SuggestSongModal'
 import PhotoUploadModal from './PhotoUploadModal'
 import BankDetailsModal from './BankDetailsModal'
+
+import { Lora } from 'next/font/google'
+
+// Lora solo para texto de lectura (no headings)
+const lora = Lora({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-lora',
+})
+
+// Utilidad para aplicar Lora a textos legibles
+const bodyFont = 'font-[family-name:var(--font-lora)]'
 
 type Song = {
   _id: string
@@ -51,18 +63,18 @@ function PlaylistInline({ version }: { version: number }) {
       <h6 className="text-lg font-semibold text-center">Playlist</h6>
 
       {loading ? (
-        <p className="text-center text-sm text-gray-500 mt-2">Cargando…</p>
+        <p className={`text-center text-sm text-gray-500 mt-2 ${bodyFont}`}>Cargando…</p>
       ) : items.length === 0 ? (
-        <p className="text-center text-sm text-gray-500 mt-2">Aún no hay sugerencias. ¡Sé el primero!</p>
+        <p className={`text-center text-sm text-gray-500 mt-2 ${bodyFont}`}>Aún no hay sugerencias. ¡Sé el primero!</p>
       ) : (
         <>
           <ul className="mt-3 grid gap-2">
             {visible.map((s) => (
               <li key={s._id} className="rounded-xl shadow-md px-4 py-3 bg-white">
-                <p className="font-medium">
+                <p className={`font-medium ${bodyFont}`}>
                   {s.songName} <span className="text-gray-500">— {s.artist}</span>
                 </p>
-                <p className="text-xs text-gray-500">Propuesto por {s.personName}</p>
+                <p className={`text-xs text-gray-500 ${bodyFont}`}>Propuesto por {s.personName}</p>
               </li>
             ))}
           </ul>
@@ -71,7 +83,7 @@ function PlaylistInline({ version }: { version: number }) {
             <div className="flex justify-center mt-3">
               <button
                 onClick={() => setExpanded((v) => !v)}
-                className="rounded-xl border px-4 py-2"
+                className={`rounded-xl border px-4 py-2 ${bodyFont}`}
               >
                 {expanded ? 'Mostrar menos' : 'Mostrar más'}
               </button>
@@ -82,7 +94,6 @@ function PlaylistInline({ version }: { version: number }) {
     </div>
   )
 }
-
 
 function Polaroid({
   src,
@@ -96,26 +107,18 @@ function Polaroid({
   caption?: string
 }) {
   return (
-    <div
-      className={clsx(
-        'group absolute select-none',
-        className
-      )}
-    >
-      <div className="bg-white p-2 pb-6 rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.15)] ring-1 ring-black/5 w-full h-full
-                      transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:scale-[1.02]">
+    <div className={clsx('group absolute select-none', className)}>
+      <div className="bg-white p-2 pb-6 rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.15)] ring-1 ring-black/5 w-full h-full transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:scale-[1.02]">
         <div className="relative w-full h-full overflow-hidden rounded-[6px]">
           <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 33vw" />
         </div>
         {caption ? (
-          <p className="mt-1 text-center text-[11px] text-gray-600">{caption}</p>
+          <p className={`mt-1 text-center text-[11px] text-gray-600 ${bodyFont}`}>{caption}</p>
         ) : null}
       </div>
     </div>
   )
 }
-
-
 
 export default function InvitacionClient({
   firstName,
@@ -130,17 +133,19 @@ export default function InvitacionClient({
   const [isHowToOpen, setIsHowToOpen] = useState(false)
   const [isSuggestOpen, setIsSuggestOpen] = useState(false)
   const [songsVersion, setSongsVersion] = useState(0)
+
   // Ejemplo: Finca Atlántida (ajusta dirección/coords reales)
   const venueName = 'Finca Atlántida (Sens Restauración)'
-  const address = 'Lugar Atlántida s/n, 15800, Galicia, España' // <- cambia por tu dirección exacta
-  const destLat = 42.460423   // ej. 42.88
-  const destLng = -8.890235   // ej. -8.54
+  const address = 'Lugar Atlántida s/n, 15800, Galicia, España'
+  const destLat = 42.460423
+  const destLng = -8.890235
 
   const nearCities = [
     { name: 'Santiago de Compostela', note: 'Centro histórico', mapsQuery: 'Santiago de Compostela' },
     { name: 'A Coruña', note: 'Costa y centro', mapsQuery: 'A Coruña' },
     { name: 'Vigo', note: 'Zona Rías Baixas', mapsQuery: 'Vigo' },
-    { name: 'Pontevedra', note: 'Ciudad histórica y capital provincial', mapsQuery: 'Pontevedra' },]
+    { name: 'Pontevedra', note: 'Ciudad histórica y capital provincial', mapsQuery: 'Pontevedra' },
+  ]
 
   const airports = [
     { name: 'Santiago – Rosalía de Castro', code: 'SCQ', city: 'Santiago de Compostela' },
@@ -156,48 +161,53 @@ export default function InvitacionClient({
       transition: { delay: i * 1, duration: 3, ease: 'easeOut' }
     })
   }
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  useEffect(() => {
-    const targetDate = new Date('2026-06-25T00:00:00');
-    const interval = setInterval(() => {
-      const now = new Date();
-      const diff = targetDate.getTime() - now.getTime();
-      if (diff <= 0) {
-        clearInterval(interval);
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      setTimeLeft({ days, hours, minutes, seconds });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+  useEffect(() => {
+    const targetDate = new Date('2026-06-25T00:00:00')
+    const interval = setInterval(() => {
+      const now = new Date()
+      const diff = targetDate.getTime() - now.getTime()
+      if (diff <= 0) {
+        clearInterval(interval)
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        return
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+      const minutes = Math.floor((diff / (1000 * 60)) % 60)
+      const seconds = Math.floor((diff / 1000) % 60)
+      setTimeLeft({ days, hours, minutes, seconds })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <div className="min-h-dvh bg-[#faf6f3]">
+    <div className={`min-h-dvh bg-[#faf6f3] ${lora.variable}`}>
       <FadeInOnScroll>
         <div className='mx-auto pt-23'>
-          <h1 className="text-3xl font-semibold mb-2 text-center">¡Hola {firstName ?? 'invitado/a'}!</h1>
-          <p className="text-lg text-muted-foreground mb-6 text-center">
+          {/* h1 usa tu font de títulos desde globals.css */}
+          <h1 className="text-3xl font-semibold mb-2 text-center">
+            ¡Hola {firstName ?? 'invitado/a'}!
+          </h1>
+          <p className={`text-lg text-muted-foreground mb-6 text-center ${bodyFont}`}>
             Nos llena de alegría darte la bienvenida a tu invitación oficial a nuestra boda.
           </p>
           <div className="mt-6 flex justify-center">
-            <span className="inline-block  text-[#d49e7a] px-6 py-3 rounded-xl text-base ">
+            <span className={`inline-block text-[#d49e7a] px-6 py-3 rounded-xl text-base ${bodyFont}`}>
               ¡Gracias por ser parte de nuestra historia!
             </span>
           </div>
         </div>
       </FadeInOnScroll>
+
       {/* Fecha y contador */}
       <FadeInOnScroll>
         <section className="py-10 flex flex-col items-center gap-6">
-          <p className="text-xl">Te esperamos el día</p>
+          <p className={`text-xl ${bodyFont}`}>Te esperamos el día</p>
+          {/* h4 hereda font de títulos global */}
           <h4 className="text-2xl font-extralight">25 de Junio de 2026</h4>
-          <div className="flex justify-center gap-6 text-lg">
+          <div className={`flex justify-center gap-6 text-lg ${bodyFont}`}>
             {["Días", "Hs", "Min", "Seg"].map((label, i) => (
               <div key={label} className="flex flex-col items-center">
                 <strong>{Object.values(timeLeft)[i]}</strong>
@@ -207,19 +217,23 @@ export default function InvitacionClient({
           </div>
         </section>
       </FadeInOnScroll>
+
       {/* Ceremonia */}
       <FadeInOnScroll>
         <section className="py-12 bg-[#faf6f3]">
           <div className="container mx-auto px-4 grid md:grid-cols-1 gap-12 text-center">
             <div className="flex flex-col items-center gap-4">
-              <div className="flex  items-center gap-4">
+              <div className="flex items-center gap-4">
                 <PiChurchThin size={70} />
                 <GiWineGlass size={50} />
               </div>
+              {/* h4 títulos globales */}
               <h4 className="text-2xl">Ceremonia & Celebración</h4>
-              <p className="text-xl">Un momento íntimo y sincero que queremos compartir con ustedes..</p>
+              <p className={`text-xl ${bodyFont}`}>
+                Un momento íntimo y sincero que queremos compartir con ustedes..
+              </p>
               <button
-                className="btn-primary mt-4"
+                className={`btn-primary mt-4 ${bodyFont}`}
                 onClick={() => setIsHowToOpen(true)}
               >
                 Cómo llegar
@@ -229,7 +243,7 @@ export default function InvitacionClient({
         </section>
       </FadeInOnScroll>
 
-      {/* Modal */}
+      {/* Modal Cómo llegar */}
       <HowToArriveModal
         open={isHowToOpen}
         onClose={() => setIsHowToOpen(false)}
@@ -255,25 +269,26 @@ export default function InvitacionClient({
           note: 'Habla frances e inglés',
         }}
       />
+
       {/* Dresscode */}
       <FadeInOnScroll>
         <section className="py-16 text-center">
           <div className="flex justify-center items-center px-2">
             <div
-              className={`relative w-full max-w-[400px] transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? '[transform:rotateY(180deg)]' : ''
-                }`}
+              className={`relative w-full max-w-[400px] transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? '[transform:rotateY(180deg)]' : ''}`}
             >
               {/* Frente */}
               <div className="absolute inset-0 h-full w-full rounded-xl shadow-lg flex flex-col justify-center items-center gap-6 p-6 bg-white [backface-visibility:hidden]">
                 <GiTravelDress size={80} className="text-[clamp(3rem,8vw,6rem)] mb-4 " />
                 <div className="bg-[#cacaca] h-[2px] w-1/3 mb-8" />
-                <p className="text-[clamp(1.25rem,3vw,1.75rem)] text-center">
+                <p className={`text-[clamp(1.25rem,3vw,1.75rem)] text-center ${bodyFont}`}>
                   Nuestra historia se viste de gala
                 </p>
+                {/* h5 con fuente de títulos global */}
                 <h5 className="text-[clamp(1.5rem,4vw,2rem)]">¡Y tú también!</h5>
                 <button
                   onClick={() => setFlipped(true)}
-                  className="mt-15 px-6 py-3 bg-black text-white rounded-lg hover:bg-[#333] transition text-[clamp(0.9rem,2.5vw,1.1rem)]"
+                  className={`mt-15 px-6 py-3 bg-black text-white rounded-lg hover:bg-[#333] transition text-[clamp(0.9rem,2.5vw,1.1rem)] ${bodyFont}`}
                 >
                   Descubrir dresscode
                 </button>
@@ -282,12 +297,13 @@ export default function InvitacionClient({
               {/* Dorso */}
               <div className="w-full rounded-xl shadow-lg flex flex-col justify-start items-center p-6 bg-white [transform:rotateY(180deg)] [backface-visibility:hidden]">
                 <Image src={'/drescode-image.png'} alt="dresscode" className="h-52 w-52" width={500} height={500} />
+                {/* h3 títulos globales */}
                 <h3 className="text-[clamp(1.25rem,3vw,1.75rem)] font-bold mb-4">Formal</h3>
-                <p className="text-center text-[clamp(1rem,2.5vw,1.2rem)]">
+                <p className={`text-center text-[clamp(1rem,2.5vw,1.2rem)] ${bodyFont}`}>
                   Queremos que te sientas especial y luzcas espectacular en nuestro día.
                 </p>
                 <div className="mt-4 flex flex-col items-center gap-2">
-                  <p>Colores</p>
+                  <p className={bodyFont}>Colores</p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {['#c1b4ac', '#cbb39d', '#ab8360', '#b47d60'].map((color, i) => (
                       <svg key={i} viewBox="0 0 100 100" className="w-10 h-10" style={{ fill: color }}>
@@ -295,11 +311,11 @@ export default function InvitacionClient({
                       </svg>
                     ))}
                   </div>
-                  <p>Champagne</p>
+                  <p className={bodyFont}>Champagne</p>
                 </div>
                 <button
                   onClick={() => setFlipped(false)}
-                  className="mt-6 px-6 py-3 bg-black text-white rounded-lg hover:bg-[#333] transition text-[clamp(0.9rem,2.5vw,1.1rem)]"
+                  className={`mt-6 px-6 py-3 bg-black text-white rounded-lg hover:bg-[#333] transition text-[clamp(0.9rem,2.5vw,1.1rem)] ${bodyFont}`}
                 >
                   Volver
                 </button>
@@ -312,6 +328,7 @@ export default function InvitacionClient({
       {/* Galería */}
       <section className="py-12 bg-[#faf6f3]">
         <div className="container mx-auto px-4">
+          {/* h2 usa títulos globales */}
           <h2 className="text-3xl text-center font-semibold mb-8">Galería</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {images.map((src, index) => (
@@ -349,20 +366,21 @@ export default function InvitacionClient({
             <div className="flex flex-col items-center gap-4">
               {icon}
 
+              {/* h5 título global */}
               <h5 className="text-2xl">{title}</h5>
-              <p className="text-xl">{text}</p>
+              <p className={`text-xl ${bodyFont}`}>{text}</p>
 
               {idx === 0 ? (
                 <>
                   <PlaylistInline version={songsVersion} />
                   <div className="flex flex-wrap gap-3 mt-6">
-                    <button className="btn-primary" onClick={() => setIsSuggestOpen(true)}>
+                    <button className={`btn-primary ${bodyFont}`} onClick={() => setIsSuggestOpen(true)}>
                       {button}
                     </button>
                   </div>
                 </>
               ) : (
-                <button className="btn-primary mt-6" onClick={() => setIsPhotoOpen(true)}>
+                <button className={`btn-primary mt-6 ${bodyFont}`} onClick={() => setIsPhotoOpen(true)}>
                   {button}
                 </button>
               )}
@@ -371,13 +389,14 @@ export default function InvitacionClient({
         </FadeInOnScroll>
       ))}
 
-
       <FadeInOnScroll>
         <section className="grid md:grid-cols-1">
           <div className="flex flex-col items-center justify-center bg-[#faf6f3] p-8 gap-4">
             <CiGift size={60} />
-            <p className="text-xl text-center">Si deseas hacernos un regalo, además de tu hermosa presencia...</p>
-            <button className="btn-primary mt-6" onClick={() => setIsBankOpen(true)}>
+            <p className={`text-xl text-center ${bodyFont}`}>
+              Si deseas hacernos un regalo, además de tu hermosa presencia...
+            </p>
+            <button className={`btn-primary mt-6 ${bodyFont}`} onClick={() => setIsBankOpen(true)}>
               Ver datos bancarios
             </button>
           </div>
@@ -387,7 +406,7 @@ export default function InvitacionClient({
       <FadeInOnScroll>
         <section className="pt-12 bg-[#faf6f3]">
           <div className="relative mx-auto max-w-6xl">
-            {/* Fallback móvil: grid simple sin solapamiento */}
+            {/* Móvil */}
             <div className="grid grid-cols-2 gap-3 sm:hidden">
               {[
                 'https://my-page-negiupp.s3.amazonaws.com/1747832102521.jpeg',
@@ -405,15 +424,13 @@ export default function InvitacionClient({
               ))}
             </div>
 
-            {/* Desktop/Tablet: collage artístico con superposición */}
+            {/* Desktop/Tablet */}
             <div className="hidden sm:block relative h-[70vh] md:h-[60vh] lg:h-[55vh]">
-              {/* Polaroid central (enfasis) */}
               <Polaroid
                 src="https://my-page-negiupp.s3.amazonaws.com/1747832102521.jpeg"
                 alt="Central"
                 className="top-[18%] left-1/2 -translate-x-1/2 z-30 rotate-[-3deg] w-48 h-60 md:w-64 md:h-80"
               />
-              {/* Resto de polaroids */}
               <Polaroid
                 src="https://my-page-negiupp.s3.amazonaws.com/1761826629892.JPG"
                 alt="Lado izq 1"
@@ -442,14 +459,14 @@ export default function InvitacionClient({
             </div>
           </div>
 
+          {/* Mensaje con tu font de titles por herencia global */}
           <p className="bg-[#d49e7a] text-white text-lg p-8 text-center">
             Gracias por ser parte de este capítulo tan importante de nuestras vidas
           </p>
         </section>
-
       </FadeInOnScroll>
 
-      {/* Modal sugerir canción */}
+      {/* Modales */}
       <SuggestSongModal
         open={isSuggestOpen}
         onClose={() => setIsSuggestOpen(false)}
@@ -465,16 +482,14 @@ export default function InvitacionClient({
         onClose={() => setIsBankOpen(false)}
         account={{
           holder: 'Juan Sebastián Suárez & Romina',
-          iban: 'CH93 0076 2011 6238 5295 7', // ejemplo de formato CH — cámbialo por el real
+          iban: 'CH93 0076 2011 6238 5295 7',
           bankName: 'Tu Banco Bonito SA',
           bic: 'POFICHBEXXX',
           currency: 'CHF',
           concept: 'Regalo de boda — Juan & Romina',
           note: 'Si prefieres efectivo, prometemos invertirlo en abrazos y buen café ☕️💛',
-          // qrImage: 'https://tu-s3/qr.png', // opcional
         }}
       />
-
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { verifyGuestToken, type GuestTokenPayload } from '@/lib/jwt'
 import InvitacionClient from '@/app/componentes/InitationClient'
 
+
 export default async function InvitacionPage() {
   const c = await cookies()
   const token = c.get('guest_token')?.value

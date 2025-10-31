@@ -12,6 +12,16 @@ import FadeInOnScroll from '../componentes/FadeScroll';
 import InviteForm from '../componentes/InviteForm';
 import HowToArriveModal from '../componentes/HowToArriveModal';
 
+import { Lora } from 'next/font/google';
+const lora = Lora({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-lora',
+});
+
+// Utilidad para aplicar Lora a textos legibles (no headings)
+const bodyFont = 'font-[family-name:var(--font-lora)]';
+
 export default function Home() {
   const params = useParams<{ locale: string }>();
   const locale = (params?.locale as string) || 'es';
@@ -82,7 +92,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen w-full text-[#363432] bg-[#faf6f3]">
+    <main className={`min-h-screen w-full text-[#363432] bg-[#faf6f3] ${lora.variable}`}>
       {/* ====== SECCIONES PÚBLICAS ====== */}
 
       {/* Hero */}
@@ -108,7 +118,7 @@ export default function Home() {
       {/* Frase */}
       <FadeInOnScroll>
         <section className="bg-[#d0b7a4] py-6 text-white text-center px-4">
-          <p className="max-w-3xl mx-auto text-2xl font-light">
+          <p className={`max-w-3xl mx-auto text-2xl font-light `}>
             A veces, dos almas se encuentran y descubren que juntas pueden construir un hogar que ningún plano podría imaginar...
           </p>
         </section>
@@ -117,9 +127,10 @@ export default function Home() {
       {/* Fecha y contador */}
       <FadeInOnScroll>
         <section className="py-10 flex flex-col items-center gap-6">
-          <p className="text-xl">Te esperamos el día</p>
+          <p className={`text-xl ${bodyFont}`}>Te esperamos el día</p>
+          {/* h4 (título) conserva tu fuente de headings desde globals.css */}
           <h4 className="text-2xl font-extralight">25 de Junio de 2026</h4>
-          <div className="flex justify-center gap-6 text-lg">
+          <div className={`flex justify-center gap-6 text-lg ${bodyFont}`}>
             {['Días', 'Hs', 'Min', 'Seg'].map((label, i) => (
               <div key={label} className="flex flex-col items-center">
                 <strong>{Object.values(timeLeft)[i]}</strong>
@@ -139,9 +150,13 @@ export default function Home() {
                 <PiChurchThin size={70} />
                 <GiWineGlass size={50} />
               </div>
+              {/* h4 conserva fuente de títulos */}
               <h4 className="text-2xl">Ceremonia & Celebración</h4>
-              <p className="text-xl">Un momento íntimo y sincero que queremos compartir con ustedes..</p>
-              <button className="btn-primary mt-4" onClick={() => setIsHowToOpen(true)}>
+              <p className={`text-xl ${bodyFont}`}>Un momento íntimo y sincero que queremos compartir con ustedes..</p>
+              <button
+                className={`btn-primary mt-4 ${bodyFont}`}
+                onClick={() => setIsHowToOpen(true)}
+              >
                 Cómo llegar
               </button>
             </div>
@@ -179,6 +194,7 @@ export default function Home() {
       {/* Nuestra historia */}
       <FadeInOnScroll>
         <section className="py-16 text-center">
+          {/* h2 conserva tu tipografía de títulos */}
           <h2 className="text-3xl mb-8">Nuestra historia</h2>
           <div className="overflow-hidden w-full">
             <div className="flex w-max animate-scroll-left space-x-6">
@@ -201,8 +217,8 @@ export default function Home() {
       {invited ? (
         <FadeInOnScroll>
           <section className="py-12 text-center">
-            <p className="text-lg">¡Ya tienes acceso!</p>
-            <Link href={`/${locale}/invitacion`} className="btn-primary mt-4 inline-block">
+            <p className={`text-lg ${bodyFont}`}>¡Ya tienes acceso!</p>
+            <Link href={`/${locale}/invitacion`} className={`btn-primary mt-4 inline-block ${bodyFont}`}>
               Abrir invitación
             </Link>
           </section>
@@ -211,7 +227,7 @@ export default function Home() {
         <>
           <InviteForm onSent={(emails) => setEmailSentTo(emails?.[0])} />
           {emailSentTo && (
-            <p className="text-center text-sm text-gray-600 mt-2">
+            <p className={`text-center text-sm text-gray-600 mt-2 ${bodyFont}`}>
               Te enviamos el enlace a <strong>{emailSentTo}</strong>. Revisa tu bandeja (y spam).
             </p>
           )}
