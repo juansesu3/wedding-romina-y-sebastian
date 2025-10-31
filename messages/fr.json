@@ -1,11 +1,181 @@
 {
-    "navbar": {
-        "home": "Inicio",
-        "about": "Acerca de",
-        "services": "Servicios",
-        "blog": "Blog",
-        "contact": "Contacto",
-        "pricing": "Precios"
+    "first_page": {
+        "first-quote": "Parfois, deux âmes se rencontrent et découvrent qu’ensemble elles peuvent bâtir un foyer qu’aucun plan ne pourrait imaginer…",
+        "section1-time": {
+            "title": "Nous t’attendons le",
+            "date": "25 juin 2026",
+            "day": "Jours",
+            "hour": "h",
+            "minute": "Min",
+            "second": "Sec"
+        },
+        "ceremony": {
+            "title": "Cérémonie & Fête",
+            "text": "Un moment intime et sincère que nous voulons partager avec vous…",
+            "button": "Comment y arriver",
+            "modal": {
+                "btn": "Fermer",
+                "title": "Comment y arriver",
+                "name": "Finca Atlántida (Sens Restauración)",
+                "address": "Lieu-dit Atlántida s/n, 15800, Galice, Espagne",
+                "title-view": "Un aperçu du domaine",
+                "city": {
+                    "title": "Villes à proximité"
+                },
+                "airport": {
+                    "title": "Aéroports à proximité"
+                },
+                "advisor": {
+                    "title": "Assistance / Tourisme",
+                    "description": "Conseillère en tourisme",
+                    "text": "Parle français et anglais",
+                    "info": "Si tu as besoin d’aide pour l’hébergement ou le transport local, tu peux la contacter directement."
+                },
+                "routing": {
+                    "title": "Planifier l’itinéraire",
+                    "use": "Utiliser ma position",
+                    "description": "Ton point de départ (ex. Praza do Obradoiro, Santiago) ou lat,lng",
+                    "button": "Google Maps",
+                    "button-apple": "Apple Maps",
+                    "tip": "Astuce : si tu saisis ton origine au format lat,lng (ex. 42.8782,-8.5448), l’itinéraire sera plus précis."
+                }
+            }
+        },
+        "our-hisotyr": {
+            "title": "Notre histoire"
+        },
+        "form-confirmation": {
+            "title": "Merci de confirmer ta présence !",
+            "text": "Complète tes infos comme contact principal et, si besoin, ajoute tes accompagnants.",
+            "subtitle": "Contact principal (toi)",
+            "inputs": {
+                "name": "Prénom",
+                "last-name": "Nom de famille",
+                "email": "Ton e-mail (tu y recevras le lien)",
+                "phone": "Ton téléphone (optionnel)",
+                "age": "Âge",
+                "age-child": "Âge de l’enfant",
+                "is-child": "Es-tu un enfant ?",
+                "allergies": "Allergies (le cas échéant)",
+                "dietary": "Régime alimentaire",
+                "dietary-other": "Précise le régime",
+                "dietary-options": {
+                    "none": "Sans restriction",
+                    "vegetarian": "Végétarien",
+                    "vegan": "Végane",
+                    "pescatarian": "Pesco-végétarien",
+                    "gluten_free": "Sans gluten",
+                    "halal": "Halal",
+                    "kosher": "Casher",
+                    "no_pork": "Sans porc",
+                    "no_alcohol": "Sans alcool",
+                    "other": "Autre"
+                },
+                "mobility-needs": "Besoins de mobilité / accessibilité (optionnel)",
+                "song-suggestion": "Chanson que tu aimerais entendre (optionnel)",
+                "preferences": {
+                    "title": "Préférences",
+                    "lang": {
+                        "es": "Espagnol",
+                        "fr": "Français"
+                    }
+                },
+                "note": "Notes pour les mariés (optionnel)",
+                "companion": {
+                    "title": "Accompagnants (optionnel)",
+                    "add": "Ajouter un accompagnant",
+                    "remove": "Retirer l’accompagnant",
+                    "email": "E-mail de l’accompagnant (optionnel)"
+                },
+                "btn": "Confirmer la présence",
+                "last-info": "Si tu ne vois pas l’e-mail, vérifie Spam ou Promotions.",
+                "confirmation": {
+                    "title1": "Nous avons envoyé le lien à",
+                    "title2": "Vérifie ta boîte (et spam)."
+                }
+            }
+        }
+    },
+    "invited-confirmed": {
+        "title": "Salut",
+        "text": "Nous sommes ravis de te souhaiter la bienvenue dans ton invitation officielle à notre mariage.",
+        "subtitle": "Merci de faire partie de notre histoire !",
+        "btn": "Ouvrir l’invitation",
+        "dress-code": {
+            "title": "Notre histoire s’habille d’élégance",
+            "subtitle": "Et toi aussi !",
+            "btn": "Découvrir le dress code",
+            "subtitle2": "Formel",
+            "text": "Nous voulons que tu te sentes spécial·e et que tu sois superbe pour notre grand jour.",
+            "colors": {
+                "name": "Couleurs",
+                "title": "Champagne",
+                "btn": "Retour"
+            }
+        },
+        "galery": {
+            "name": "Galerie"
+        },
+        "songs": {
+            "title": "La fête est lancée",
+            "text": "Ce sera l’occasion de se détendre et de profiter tous ensemble, dans une ambiance pour tous.",
+            "btn": "Suggérer une chanson",
+            "playlist": {
+                "title": "Playlist",
+                "porpues": "Proposé par"
+            },
+            "form": {
+                "title": "Suggérer une chanson",
+                "sub": "Ajoute une chanson pour la fête 🎶",
+                "name": "Nom de la chanson",
+                "ejempl": "Ex. Despechá",
+                "artist": "Artiste",
+                "ejempl-artist": "Ex. Rosalía",
+                "person": "Ton nom",
+                "ejempl-person": "Ex. Marie Dupont",
+                "btn": "Ajouter",
+                "error": "Merci de compléter tous les champs.",
+                "cancelar": "Annuler"
+            },
+            "photos": {
+                "title": "Photos inoubliables",
+                "sub": "Nous voulons capturer chaque sourire, chaque étreinte, chaque moment.",
+                "btn": "Dépose tes photos",
+                "form": {
+                    "title": "Dépose tes photos",
+                    "sub": "L’album est ouvert ! 🎉 Très bientôt tu pourras déposer tes photos ici.",
+                    "subtitle": "Ici tu pourras envoyer tes photos le",
+                    "subtile2": "jour du mariage.",
+                    "subtitle3": "Il s’activera le",
+                    "subtile4": "25 juin 2026.",
+                    "subtitle5": "D’ici là, l’album reste en mode surprise 🤫. Promis, on accepte :",
+                    "subtitle6": "Selfies, photos floues de la piste et preuves du pas interdit 🕺📸",
+                    "btn": "C’est noté !"
+                }
+            },
+            "gift": {
+                "title": "Si tu souhaites nous faire un cadeau, en plus de ta belle présence…",
+                "btn": "Voir les coordonnées bancaires",
+                "modal": {
+                    "title": "Coordonnées bancaires",
+                    "subtitle": "Ta présence est le plus beau cadeau 💛",
+                    "subtile2": "Mais si tu veux booster notre tirelire voyage, voici les infos ☺️",
+                    "holder": "Titulaire",
+                    "iban": "IBAN",
+                    "bank": "Banque",
+                    "bic": "BIC/SWIFT",
+                    "currency": "Monnaie",
+                    "concept": "Motif",
+                    "note": "Si tu préfères du liquide, promis on l’investira en câlins et bon café ☕️💛",
+                    "btn1": "Tout copier",
+                    "btn2": "Fermer",
+                    "info": "Copier",
+                    "success": "Copié !"
+                }
+            },
+            "finish": {
+                "title": "Merci de faire partie de ce chapitre si important de nos vies"
+            }
+        }
     }
-       
 }

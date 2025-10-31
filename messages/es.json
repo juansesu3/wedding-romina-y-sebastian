@@ -1,11 +1,181 @@
 {
-    "navbar": {
-        "home": "Inicio",
-        "about": "Acerca de",
-        "services": "Servicios",
-        "blog": "Blog",
-        "contact": "Contacto",
-        "pricing": "Precios"
+    "first_page": {
+        "first-quote": "A veces, dos almas se encuentran y descubren que juntas pueden construir un hogar que ningún plano podría imaginar...",
+        "section1-time": {
+            "title": "Te esperamos el día",
+            "date": "25 de Junio de 2026",
+            "day": "Días",
+            "hour": "Hs",
+            "minute": "Min",
+            "second": "Seg"
+        },
+        "ceremony": {
+            "title": "Ceremonia & Celebración",
+            "text": "Un momento íntimo y sincero que queremos compartir con ustedes...",
+            "button": "Cómo llegar",
+            "modal": {
+                "title": "Cómo llegar",
+                "btn": "Cerrar",
+                "name": "Finca Atlántida (Sens Restauración)",
+                "address": "Lugar Atlántida s/n, 15800, Galicia, España",
+                "title-view": "Un vistazo a la finca",
+                "city": {
+                    "title": "Ciudades cercanas"
+                },
+                "airport": {
+                    "title": "Aeropuertos cercanos"
+                },
+                "advisor": {
+                    "title": "Asistencia / Turismo",
+                    "description": "Asesora de turismo",
+                    "text": "Habla frances e inglés",
+                    "info": "Si necesitas ayuda con alojamiento o transporte local, puedes contactarla directamente."
+                },
+                "routing": {
+                    "title": "Planificar ruta",
+                    "use": "Usar mi ubicación",
+                    "description": "Tu origen (ej. Praza do Obradoiro, Santiago) o lat,lng",
+                    "button": "Google Maps",
+                    "button-apple": "Apple Maps",
+                    "tip": "Tip: Si escribes tu origen como lat,lng (ej. 42.8782,-8.5448) la ruta será más precisa."
+                }
+            }
+        },
+        "our-hisotyr": {
+            "title": "Nuestra historia"
+        },
+        "form-confirmation": {
+            "title": "¡Gracias por confirmar tu asistencia!",
+            "text": "Completa tus datos como contacto principal y, si corresponde, agrega a tus acompañantes.",
+            "subtitle": "Contacto principal (tú)",
+            "inputs": {
+                "name": "Nombre",
+                "last-name": "Apellidos",
+                "email": "Tu correo (recibirás el enlace)",
+                "phone": "Tu teléfono (opcional)",
+                "age": "Edad",
+                "age-child": "Edad del niño/niña",
+                "is-child": "Eres niño/niña?",
+                "allergies": "Alergias (si aplica)",
+                "dietary": "Dietary",
+                "dietary-other": "Especifica la dieta",
+                "dietary-options": {
+                    "none": "Sin restricciones",
+                    "vegetarian": "Vegetariano",
+                    "vegan": "Vegano",
+                    "pescatarian": "Pescetariano",
+                    "gluten_free": "Sin gluten",
+                    "halal": "Halal",
+                    "kosher": "Kosher",
+                    "no_pork": "Sin cerdo",
+                    "no_alcohol": "Sin alcohol",
+                    "other": "Otro"
+                },
+                "mobility-needs": "Necesidades de movilidad / accesibilidad (opcional)",
+                "song-suggestion": "Canción que te gustaría oír (opcional)",
+                "preferences": {
+                    "title": "Preferencias",
+                    "lang": {
+                        "es": "Español",
+                        "fr": "Francés"
+                    }
+                },
+                "note": "Notas para la pareja (opcional)",
+                "companion": {
+                    "title": "Acompañantes (opcional)",
+                    "add": "Añadir acompañante",
+                    "remove": "Quitar acompañante",
+                    "email": "Correo del acompañante (opcional)"
+                },
+                "btn": "Confirmar asistencia",
+                "last-info": "Si no ves el correo, revisa Spam o Promociones.",
+                "confirmation": {
+                    "title1": "Te enviamos el enlace a",
+                    "title2": "Revisa tu bandeja (y spam)."
+                }
+            }
+        }
+    },
+    "invited-confirmed": {
+        "title": "¡Hola",
+        "text": "Nos llena de alegría darte la bienvenida a tu invitación oficial a nuestra boda.",
+        "subtitle": "¡Gracias por ser parte de nuestra historia!",
+        "btn": "Abrir invitación",
+        "dress-code": {
+            "title": "Nuestra historia se viste de gala",
+            "subtitle": "¡Y tú también!",
+            "btn": "Descubrir dresscode",
+            "subtitle2": "Formal",
+            "text": "Queremos que te sientas especial y luzcas espectacular en nuestro día.",
+            "colors": {
+                "name": "Colores",
+                "title": "Champagne",
+                "btn": "Volver"
+            }
+        },
+        "galery": {
+            "name": "Galería"
+        },
+        "songs": {
+            "title": "La fiesta está en marcha",
+            "text": "Será una ocasión para relajarnos y disfrutar juntos, en un ambiente para todos.",
+            "btn": "Sugerir canción",
+            "playlist": {
+                "title": "Playlist",
+                "porpues": "Propuesto por"
+            },
+            "form": {
+                "title": "Sugerir canción",
+                "sub": "Agrega una canción para la fiesta 🎶",
+                "name": "Nombre de la canción",
+                "ejempl": "Ej. Despechá",
+                "artist": "Artista",
+                "ejempl-artist": "Ej. Rosalía",
+                "person": "Tu nombre",
+                "ejempl-person": "Ej. María Pérez",
+                "btn": "Agregar",
+                "error": "Por favor completa todos los campos.",
+                "cancelar": "Cancelar"
+            },
+            "photos": {
+                "title": "Fotos inolvidables",
+                "sub": "Queremos capturar cada sonrisa, cada abrazo, cada momento.",
+                "btn": "Sube tus fotos",
+                "form": {
+                    "title": "Sube tus fotos",
+                    "sub": "¡El álbum está abierto! 🎉 Muy pronto podrás subir aquí tus fotos.",
+                    "subtitle": "Aquí podrás subir las fotos el",
+                    "subtile2": "día de la boda.",
+                    "subtitle3": "Se habilitará el",
+                    "subtile4": "25 de junio de 2026.",
+                    "subtitle5": "Hasta entonces, el álbum está en modo sorpresa 🤫. Prometemos aceptar:",
+                    "subtitle6": "Selfies, fotos movidas de la pista y evidencia del pasito prohibido 🕺📸",
+                    "btn": "¡Entendido!"
+                }
+            },
+            "gift": {
+                "title": "Si deseas hacernos un regalo, además de tu hermosa presencia...",
+                "btn": "Ver datos bancarios",
+                "modal": {
+                    "title": "Datos bancarios",
+                    "subtitle": "Tu presencia es el mejor regalo 💛",
+                    "subtile2": "Pero si quieres empujar nuestra huchita viajera, aquí tienes los datos ☺️",
+                    "holder": "Titular",
+                    "iban": "IBAN",
+                    "bank": "Banco",
+                    "bic": "BIC/SWIFT",
+                    "currency": "Moneda",
+                    "concept": "Concepto",
+                    "note": "Si prefieres efectivo, prometemos invertirlo en abrazos y buen café ☕️💛",
+                    "btn1": "Copiar todo",
+                    "btn2": "Cerrar",
+                    "info":"Copiar",
+                    "success":"¡Copiado!"
+                }
+            },
+            "finish": {
+                "title": "Gracias por ser parte de este capítulo tan importante de nuestras vidas"
+            }
+        }
     }
-       
 }

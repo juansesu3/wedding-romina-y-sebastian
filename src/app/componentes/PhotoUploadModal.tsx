@@ -1,6 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { Lora } from 'next/font/google'
 
 const lora = Lora({
@@ -20,7 +21,7 @@ export default function PhotoUploadModal({
   const now = new Date()
   const availableFrom = new Date(availabilityDate)
   const isAvailable = now >= availableFrom
-
+const t = useTranslations('invited-confirmed.songs.photos');
   return (
     <AnimatePresence>
       {open && (
@@ -38,29 +39,29 @@ export default function PhotoUploadModal({
             onClick={(e) => e.stopPropagation()}
             className={`${lora.className} w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl text-center`}
           >
-            <h3 className="text-xl font-semibold">Sube tus fotos</h3>
+            <h3 className="text-xl font-semibold">{t('form.title')}</h3>
 
             {!isAvailable ? (
               <>
                 <p className="text-sm text-gray-600 mt-2">
-                  Aquí podrás subir las fotos el <strong>día de la boda</strong>.
+                {t('form.subtitle')} <strong>{t('form.subtile2')}</strong>.
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Se habilitará el <strong>25 de junio de 2026</strong>.
+                {t('form.subtitle3')} <strong>{t('form.subtile4')}</strong>.
                 </p>
                 <div className="mt-4 rounded-xl border px-4 py-3 bg-[#faf6f3]">
                   <p className="text-sm">
-                    Hasta entonces, el álbum está en <em>modo sorpresa</em> 🤫. Prometemos aceptar:
+                  {t('form.subtitle5')}
                     <br />
-                    selfies, fotos movidas de la pista y evidencia del{' '}
-                    <span className="italic">pasito prohibido</span> 🕺📸
+                    {t('form.subtitle6')}
+
                   </p>
                 </div>
                 <button
                   onClick={onClose}
                   className="mt-6 rounded-xl bg-[#d49e7a] text-white px-5 py-2"
                 >
-                  ¡Entendido!
+                  {t('form.btn')}
                 </button>
               </>
             ) : (

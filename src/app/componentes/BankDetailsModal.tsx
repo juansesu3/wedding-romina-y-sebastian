@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { Lora } from 'next/font/google'
+import { useTranslations } from 'next-intl'
 
 const lora = Lora({
   subsets: ['latin'],
@@ -30,7 +31,7 @@ export default function BankDetailsModal({
   account: BankAccount
 }) {
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
-
+  const t = useTranslations('invited-confirmed.songs.gift');
   const prettyIBAN = useMemo(() => {
     // Separa cada 4 caracteres para legibilidad
     return account.iban.replace(/\s+/g, '').replace(/(.{4})/g, '$1 ').trim()
@@ -47,7 +48,7 @@ export default function BankDetailsModal({
   }
 
   const allText = [
-    `Titular: ${account.holder}`,
+    `${t('modal.holder')}: ${account.holder}`,
     `IBAN: ${account.iban}`,
     account.bankName ? `Banco: ${account.bankName}` : null,
     account.bic ? `BIC/SWIFT: ${account.bic}` : null,
@@ -72,10 +73,10 @@ export default function BankDetailsModal({
             onClick={(e) => e.stopPropagation()}
             className={`${lora.className} w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl`}
           >
-            <h3 className="text-xl font-semibold text-center">Datos bancarios</h3>
+            <h3 className="text-xl font-semibold text-center">{t('modal.title')}</h3>
             <p className="text-sm text-gray-600 text-center mt-1">
-              Tu presencia es el mejor regalo 💛<br />
-              Pero si quieres empujar nuestra <em>huchita viajera</em>, aquí tienes los datos ☺️
+              {t('modal.subtitle')}<br />
+              {t('modal.subtile2')}
             </p>
 
             {/* QR opcional */}
@@ -93,7 +94,7 @@ export default function BankDetailsModal({
 
             <div className="mt-4 space-y-3">
               <Row
-                label="Titular"
+                label={t('modal.holder')}
                 value={account.holder}
                 onCopy={() => copy(account.holder, 'holder')}
                 copied={copiedKey === 'holder'}
@@ -108,7 +109,7 @@ export default function BankDetailsModal({
               />
               {account.bankName && (
                 <Row
-                  label="Banco"
+                  label={t('modal.bank')}
                   value={account.bankName}
                   onCopy={() => copy(account.bankName!, 'bank')}
                   copied={copiedKey === 'bank'}
@@ -125,7 +126,7 @@ export default function BankDetailsModal({
               )}
               {account.currency && (
                 <Row
-                  label="Moneda"
+                  label={t('modal.currency')}
                   value={account.currency}
                   onCopy={() => copy(account.currency!, 'currency')}
                   copied={copiedKey === 'currency'}
@@ -133,7 +134,7 @@ export default function BankDetailsModal({
               )}
               {account.concept && (
                 <Row
-                  label="Concepto"
+                  label={t('modal.concept')}
                   value={account.concept}
                   onCopy={() => copy(account.concept!, 'concept')}
                   copied={copiedKey === 'concept'}
@@ -150,13 +151,13 @@ export default function BankDetailsModal({
                 onClick={() => copy(allText, 'all')}
                 className="flex-1 rounded-xl border px-4 py-2"
               >
-                {copiedKey === 'all' ? '¡Copiado!' : 'Copiar todo'}
+                {copiedKey === 'all' ? '¡Copiado!' : t('modal.btn1')}
               </button>
               <button
                 onClick={onClose}
                 className="flex-1 rounded-xl bg-[#d49e7a] text-white px-4 py-2"
               >
-                Cerrar
+                {t('modal.btn2')}
               </button>
             </div>
           </motion.div>
@@ -180,6 +181,7 @@ function Row({
   onCopy: () => void
   copied: boolean
 }) {
+  const t = useTranslations('invited-confirmed.songs.gift');
   return (
     <div className="flex items-start justify-between gap-3 rounded-xl border px-3 py-2 bg-[#faf6f3]">
       <div className="min-w-0">
@@ -189,10 +191,10 @@ function Row({
       <button
         onClick={onCopy}
         className="shrink-0 rounded-lg border px-3 py-1 text-sm"
-        aria-label={`Copiar ${label}`}
-        title={`Copiar ${label}`}
+        aria-label={`${t('modal.info')} ${label}`}
+        title={`${t('modal.info')} ${label}`}
       >
-        {copied ? '¡Copiado!' : 'Copiar'}
+        {copied ? t('modal.success') : t('modal.info')}
       </button>
     </div>
   )

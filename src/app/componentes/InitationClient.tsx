@@ -16,6 +16,7 @@ import PhotoUploadModal from './PhotoUploadModal'
 import BankDetailsModal from './BankDetailsModal'
 
 import { Lora } from 'next/font/google'
+import { useTranslations, useLocale } from 'next-intl'
 
 // Lora solo para texto de lectura (no headings)
 const lora = Lora({
@@ -35,10 +36,22 @@ type Song = {
   createdAt?: string
 }
 
+// ——— helper para el saludo con 1 o 2 nombres (localizado) ———
+function formatNamesForGreeting(names: string[], locale: string) {
+  const clean = (names || []).filter(Boolean).map(s => s.trim()).filter(Boolean)
+  const conjMap: Record<string, string> = { es: ' y ', fr: ' et ', en: ' & ', de: ' und ', it: ' e ' }
+  const conj = conjMap[locale] ?? ' & '
+  if (clean.length === 0) return 'invitado/a'
+  if (clean.length === 1) return clean[0]
+  // Para esta invitación mostramos solo los dos primeros (principal + 1 acompañante)
+  return clean.slice(0, 2).join(conj)
+}
+
 function PlaylistInline({ version }: { version: number }) {
   const [items, setItems] = useState<Song[]>([])
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(true)
+  const t = useTranslations('invited-confirmed.songs')
   const max = 10
 
   async function fetchSongs() {
@@ -60,7 +73,7 @@ function PlaylistInline({ version }: { version: number }) {
 
   return (
     <div className="w-full max-w-2xl mx-auto mt-4 text-left">
-      <h6 className="text-lg font-semibold text-center">Playlist</h6>
+      <h6 className="text-lg font-semibold text-center">{t('playlist.title')}</h6>
 
       {loading ? (
         <p className={`text-center text-sm text-gray-500 mt-2 ${bodyFont}`}>Cargando…</p>
@@ -74,7 +87,7 @@ function PlaylistInline({ version }: { version: number }) {
                 <p className={`font-medium ${bodyFont}`}>
                   {s.songName} <span className="text-gray-500">— {s.artist}</span>
                 </p>
-                <p className={`text-xs text-gray-500 ${bodyFont}`}>Propuesto por {s.personName}</p>
+                <p className={`text-xs text-gray-500 ${bodyFont}`}>{t('playlist.porpues')} {s.personName}</p>
               </li>
             ))}
           </ul>
@@ -121,12 +134,24 @@ function Polaroid({
 }
 
 export default function InvitacionClient({
+  // NUEVO: puedes pasar ambos nombres aquí (principal + 1 acompañante)
+  names,
+  // Retro-compat: si solo envías firstName, también funciona
   firstName,
   images
 }: {
-  firstName: string
+  names?: string[]
+  firstName?: string
   images: string[]
 }) {
+  const t = useTranslations('invited-confirmed')
+  const t2 = useTranslations('first_page')
+  const locale = useLocale()
+
+  // Resolvemos el nombre a mostrar
+  const greetingNames = (names && names.length ? names : (firstName ? [firstName] : []))
+  const greeting = formatNamesForGreeting(greetingNames, locale)
+
   const [isBankOpen, setIsBankOpen] = useState(false)
   const [isPhotoOpen, setIsPhotoOpen] = useState(false)
   const [flipped, setFlipped] = useState(false)
@@ -136,7 +161,7 @@ export default function InvitacionClient({
 
   // Ejemplo: Finca Atlántida (ajusta dirección/coords reales)
   const venueName = 'Finca Atlántida (Sens Restauración)'
-  const address = 'Lugar Atlántida s/n, 15800, Galicia, España'
+  const address = t2('ceremony.modal.address')
   const destLat = 42.460423
   const destLng = -8.890235
 
@@ -188,14 +213,14 @@ export default function InvitacionClient({
         <div className='mx-auto pt-23'>
           {/* h1 usa tu font de títulos desde globals.css */}
           <h1 className="text-3xl font-semibold mb-2 text-center">
-            ¡Hola {firstName ?? 'invitado/a'}!
+            {t('title')} {greeting}!
           </h1>
           <p className={`text-lg text-muted-foreground mb-6 text-center ${bodyFont}`}>
-            Nos llena de alegría darte la bienvenida a tu invitación oficial a nuestra boda.
+            {t('text')}
           </p>
           <div className="mt-6 flex justify-center">
             <span className={`inline-block text-[#d49e7a] px-6 py-3 rounded-xl text-base ${bodyFont}`}>
-              ¡Gracias por ser parte de nuestra historia!
+              {t('subtitle')}
             </span>
           </div>
         </div>
@@ -204,11 +229,10 @@ export default function InvitacionClient({
       {/* Fecha y contador */}
       <FadeInOnScroll>
         <section className="py-10 flex flex-col items-center gap-6">
-          <p className={`text-xl ${bodyFont}`}>Te esperamos el día</p>
-          {/* h4 hereda font de títulos global */}
-          <h4 className="text-2xl font-extralight">25 de Junio de 2026</h4>
+          <p className={`text-xl ${bodyFont}`}>{t2('section1-time.title')}</p>
+          <h4 className="text-2xl font-extralight">{t2('section1-time.date')}</h4>
           <div className={`flex justify-center gap-6 text-lg ${bodyFont}`}>
-            {["Días", "Hs", "Min", "Seg"].map((label, i) => (
+            {[t2('section1-time.day'), t2('section1-time.hour'), t2('section1-time.minute'), t2('section1-time.second')].map((label, i) => (
               <div key={label} className="flex flex-col items-center">
                 <strong>{Object.values(timeLeft)[i]}</strong>
                 <p>{label}</p>
@@ -227,16 +251,13 @@ export default function InvitacionClient({
                 <PiChurchThin size={70} />
                 <GiWineGlass size={50} />
               </div>
-              {/* h4 títulos globales */}
-              <h4 className="text-2xl">Ceremonia & Celebración</h4>
-              <p className={`text-xl ${bodyFont}`}>
-                Un momento íntimo y sincero que queremos compartir con ustedes..
-              </p>
+              <h4 className="text-2xl">{t2('ceremony.title')}</h4>
+              <p className={`text-xl ${bodyFont}`}>{t2('ceremony.text')}</p>
               <button
                 className={`btn-primary mt-4 ${bodyFont}`}
                 onClick={() => setIsHowToOpen(true)}
               >
-                Cómo llegar
+                {t2('ceremony.button')}
               </button>
             </div>
           </div>
@@ -263,10 +284,10 @@ export default function InvitacionClient({
         coverImage="https://my-page-negiupp.s3.amazonaws.com/1761680702588.jpg"
         advisor={{
           name: 'Gladys Salamin',
-          role: 'Asesora de turismo',
+          role: t2('ceremony.modal.advisor.description'),
           phone: '+41 79 239 96 80',
           email: 'gladys.salamin@tui.ch',
-          note: 'Habla frances e inglés',
+          note: t2('ceremony.modal.advisor.text'),
         }}
       />
 
@@ -282,28 +303,26 @@ export default function InvitacionClient({
                 <GiTravelDress size={80} className="text-[clamp(3rem,8vw,6rem)] mb-4 " />
                 <div className="bg-[#cacaca] h-[2px] w-1/3 mb-8" />
                 <p className={`text-[clamp(1.25rem,3vw,1.75rem)] text-center ${bodyFont}`}>
-                  Nuestra historia se viste de gala
+                  {t('dress-code.title')}
                 </p>
-                {/* h5 con fuente de títulos global */}
-                <h5 className="text-[clamp(1.5rem,4vw,2rem)]">¡Y tú también!</h5>
+                <h5 className="text-[clamp(1.5rem,4vw,2rem)]">{t('dress-code.subtitle')}</h5>
                 <button
                   onClick={() => setFlipped(true)}
                   className={`mt-15 px-6 py-3 bg-black text-white rounded-lg hover:bg-[#333] transition text-[clamp(0.9rem,2.5vw,1.1rem)] ${bodyFont}`}
                 >
-                  Descubrir dresscode
+                  {t('dress-code.btn')}
                 </button>
               </div>
 
               {/* Dorso */}
               <div className="w-full rounded-xl shadow-lg flex flex-col justify-start items-center p-6 bg-white [transform:rotateY(180deg)] [backface-visibility:hidden]">
                 <Image src={'/drescode-image.png'} alt="dresscode" className="h-52 w-52" width={500} height={500} />
-                {/* h3 títulos globales */}
                 <h3 className="text-[clamp(1.25rem,3vw,1.75rem)] font-bold mb-4">Formal</h3>
                 <p className={`text-center text-[clamp(1rem,2.5vw,1.2rem)] ${bodyFont}`}>
-                  Queremos que te sientas especial y luzcas espectacular en nuestro día.
+                  {t('dress-code.text')}
                 </p>
                 <div className="mt-4 flex flex-col items-center gap-2">
-                  <p className={bodyFont}>Colores</p>
+                  <p className={bodyFont}>{t('dress-code.colors.name')}</p>
                   <div className="flex flex-wrap justify-center gap-2">
                     {['#c1b4ac', '#cbb39d', '#ab8360', '#b47d60'].map((color, i) => (
                       <svg key={i} viewBox="0 0 100 100" className="w-10 h-10" style={{ fill: color }}>
@@ -311,13 +330,13 @@ export default function InvitacionClient({
                       </svg>
                     ))}
                   </div>
-                  <p className={bodyFont}>Champagne</p>
+                  <p className={bodyFont}>{t('dress-code.colors.title')}</p>
                 </div>
                 <button
                   onClick={() => setFlipped(false)}
                   className={`mt-6 px-6 py-3 bg-black text-white rounded-lg hover:bg-[#333] transition text-[clamp(0.9rem,2.5vw,1.1rem)] ${bodyFont}`}
                 >
-                  Volver
+                  {t('dress-code.colors.btn')}
                 </button>
               </div>
             </div>
@@ -328,8 +347,7 @@ export default function InvitacionClient({
       {/* Galería */}
       <section className="py-12 bg-[#faf6f3]">
         <div className="container mx-auto px-4">
-          {/* h2 usa títulos globales */}
-          <h2 className="text-3xl text-center font-semibold mb-8">Galería</h2>
+          <h2 className="text-3xl text-center font-semibold mb-8">{t('galery.name')}</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {images.map((src, index) => (
               <motion.div key={index} custom={index} initial="hidden" animate="visible" variants={imageVariants}>
@@ -350,15 +368,15 @@ export default function InvitacionClient({
       {[
         {
           icon: <GiPartyPopper size={60} />,
-          title: 'La fiesta está en marcha',
-          text: 'Será una ocasión para relajarnos y disfrutar juntos, en un ambiente para todos.',
-          button: 'Sugerir canción',
+          title: t('songs.title'),
+          text: t('songs.text'),
+          button: t('songs.btn'),
         },
         {
           icon: <IoCameraOutline size={60} />,
-          title: 'Fotos inolvidables',
-          text: 'Queremos capturar cada sonrisa, cada abrazo, cada momento.',
-          button: 'Sube tus fotos'
+          title: t('songs.photos.title'),
+          text: t('songs.photos.sub'),
+          button: t('songs.photos.btn')
         }
       ].map(({ icon, title, text, button }, idx) => (
         <FadeInOnScroll key={idx}>
@@ -366,7 +384,6 @@ export default function InvitacionClient({
             <div className="flex flex-col items-center gap-4">
               {icon}
 
-              {/* h5 título global */}
               <h5 className="text-2xl">{title}</h5>
               <p className={`text-xl ${bodyFont}`}>{text}</p>
 
@@ -394,10 +411,10 @@ export default function InvitacionClient({
           <div className="flex flex-col items-center justify-center bg-[#faf6f3] p-8 gap-4">
             <CiGift size={60} />
             <p className={`text-xl text-center ${bodyFont}`}>
-              Si deseas hacernos un regalo, además de tu hermosa presencia...
+              {t('songs.gift.title')}
             </p>
             <button className={`btn-primary mt-6 ${bodyFont}`} onClick={() => setIsBankOpen(true)}>
-              Ver datos bancarios
+              {t('songs.gift.btn')}
             </button>
           </div>
         </section>
@@ -459,9 +476,8 @@ export default function InvitacionClient({
             </div>
           </div>
 
-          {/* Mensaje con tu font de titles por herencia global */}
           <p className="bg-[#d49e7a] text-white text-lg p-8 text-center">
-            Gracias por ser parte de este capítulo tan importante de nuestras vidas
+            {t('songs.finish.title')}
           </p>
         </section>
       </FadeInOnScroll>

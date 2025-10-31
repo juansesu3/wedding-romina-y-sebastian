@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lora } from 'next/font/google'
+import { useTranslations } from 'next-intl'
 
 const lora = Lora({
   subsets: ['latin'],
@@ -37,7 +38,7 @@ export default function SuggestSongModal({ open, onClose, onAdded }: Props) {
   const [personName, setPersonName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
+const t = useTranslations('invited-confirmed.songs');
   const reset = () => {
     setSongName('')
     setArtist('')
@@ -95,39 +96,39 @@ export default function SuggestSongModal({ open, onClose, onAdded }: Props) {
             className={`${lora.className} w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl`}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-xl font-semibold text-center">Sugerir canción</h3>
+            <h3 className="text-xl font-semibold text-center">{t('form.title')}</h3>
             <p className="text-sm text-gray-500 text-center mt-1">
-              Agrega una canción para la fiesta 🎶
+              {t('form.sub')}
             </p>
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-3">
               <div>
-                <label className="text-sm text-gray-700">Nombre de la canción</label>
+                <label className="text-sm text-gray-700">{t('form.name')}</label>
                 <input
                   className="mt-1 w-full rounded-xl border px-3 py-2"
                   value={songName}
                   onChange={(e) => setSongName(e.target.value)}
-                  placeholder="Ej. Despechá"
+                  placeholder={t('form.ejempl')}
                 />
               </div>
 
               <div>
-                <label className="text-sm text-gray-700">Artista</label>
+                <label className="text-sm text-gray-700">{t('form.artist')}</label>
                 <input
                   className="mt-1 w-full rounded-xl border px-3 py-2"
                   value={artist}
                   onChange={(e) => setArtist(e.target.value)}
-                  placeholder="Ej. Rosalía"
+                  placeholder={t('form.ejempl-artist')}
                 />
               </div>
 
               <div>
-                <label className="text-sm text-gray-700">Tu nombre</label>
+                <label className="text-sm text-gray-700">{t('form.person')}</label>
                 <input
                   className="mt-1 w-full rounded-xl border px-3 py-2"
                   value={personName}
                   onChange={(e) => setPersonName(e.target.value)}
-                  placeholder="Ej. Juan Sebastián"
+                  placeholder={t('form.ejempl-person')}
                 />
               </div>
 
@@ -140,7 +141,7 @@ export default function SuggestSongModal({ open, onClose, onAdded }: Props) {
                   className="flex-1 rounded-xl border px-4 py-2"
                   disabled={loading}
                 >
-                  Cancelar
+                  {t('form.cancelar')}
                 </button>
 
                 <button
@@ -148,7 +149,7 @@ export default function SuggestSongModal({ open, onClose, onAdded }: Props) {
                   className="flex-1 rounded-xl bg-[#d49e7a] text-white px-4 py-2 disabled:opacity-50"
                   disabled={loading}
                 >
-                  {loading ? 'Guardando…' : 'Agregar'}
+                  {loading ? 'Guardando…' : t('form.btn')}
                 </button>
               </div>
             </form>

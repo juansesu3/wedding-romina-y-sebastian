@@ -13,6 +13,7 @@ import InviteForm from '../componentes/InviteForm';
 import HowToArriveModal from '../componentes/HowToArriveModal';
 
 import { Lora } from 'next/font/google';
+import { useTranslations } from 'next-intl';
 const lora = Lora({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
@@ -23,14 +24,15 @@ const lora = Lora({
 const bodyFont = 'font-[family-name:var(--font-lora)]';
 
 export default function Home() {
+  const t = useTranslations('first_page');
   const params = useParams<{ locale: string }>();
   const locale = (params?.locale as string) || 'es';
 
   const [isHowToOpen, setIsHowToOpen] = useState(false);
 
   // Ejemplo: Finca Atlántida (ajusta dirección/coords reales)
-  const venueName = 'Finca Atlántida (Sens Restauración)';
-  const address = 'Lugar Atlántida s/n, 15800, Galicia, España'; // <- cambia por tu dirección exacta
+  const venueName = t('ceremony.modal.name');
+  const address = t('ceremony.modal.address'); // <- cambia por tu dirección exacta
   const destLat = 42.460423; // ej. 42.88
   const destLng = -8.890235; // ej. -8.54
 
@@ -119,7 +121,7 @@ export default function Home() {
       <FadeInOnScroll>
         <section className="bg-[#d0b7a4] py-6 text-white text-center px-4">
           <p className={`max-w-3xl mx-auto text-2xl font-light `}>
-            A veces, dos almas se encuentran y descubren que juntas pueden construir un hogar que ningún plano podría imaginar...
+            {t('first-quote')}
           </p>
         </section>
       </FadeInOnScroll>
@@ -127,11 +129,11 @@ export default function Home() {
       {/* Fecha y contador */}
       <FadeInOnScroll>
         <section className="py-10 flex flex-col items-center gap-6">
-          <p className={`text-xl ${bodyFont}`}>Te esperamos el día</p>
+          <p className={`text-xl ${bodyFont}`}>  {t('section1-time.title')}</p>
           {/* h4 (título) conserva tu fuente de headings desde globals.css */}
-          <h4 className="text-2xl font-extralight">25 de Junio de 2026</h4>
+          <h4 className="text-2xl font-extralight">{t('section1-time.date')}</h4>
           <div className={`flex justify-center gap-6 text-lg ${bodyFont}`}>
-            {['Días', 'Hs', 'Min', 'Seg'].map((label, i) => (
+            {[t('section1-time.day'), t('section1-time.hour'), t('section1-time.minute'), t('section1-time.second')].map((label, i) => (
               <div key={label} className="flex flex-col items-center">
                 <strong>{Object.values(timeLeft)[i]}</strong>
                 <p>{label}</p>
@@ -151,13 +153,13 @@ export default function Home() {
                 <GiWineGlass size={50} />
               </div>
               {/* h4 conserva fuente de títulos */}
-              <h4 className="text-2xl">Ceremonia & Celebración</h4>
-              <p className={`text-xl ${bodyFont}`}>Un momento íntimo y sincero que queremos compartir con ustedes..</p>
+              <h4 className="text-2xl">{t('ceremony.title')}</h4>
+              <p className={`text-xl ${bodyFont}`}>{t('ceremony.text')}</p>
               <button
                 className={`btn-primary mt-4 ${bodyFont}`}
                 onClick={() => setIsHowToOpen(true)}
               >
-                Cómo llegar
+               {t('ceremony.button')}
               </button>
             </div>
           </div>
@@ -184,10 +186,10 @@ export default function Home() {
         coverImage="https://my-page-negiupp.s3.amazonaws.com/1761680702588.jpg"
         advisor={{
           name: 'Gladys Salamin',
-          role: 'Asesora de turismo',
+          role: t('ceremony.modal.advisor.description'),
           phone: '+41 79 239 96 80',
           email: 'gladys.salamin@tui.ch',
-          note: 'Habla frances e inglés',
+          note: t('ceremony.modal.advisor.text'),
         }}
       />
 
@@ -195,7 +197,7 @@ export default function Home() {
       <FadeInOnScroll>
         <section className="py-16 text-center">
           {/* h2 conserva tu tipografía de títulos */}
-          <h2 className="text-3xl mb-8">Nuestra historia</h2>
+          <h2 className="text-3xl mb-8">{t('our-hisotyr.title')}</h2>
           <div className="overflow-hidden w-full">
             <div className="flex w-max animate-scroll-left space-x-6">
               {images.concat(images).map((src, index) => (

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Lora } from 'next/font/google'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 const lora = Lora({
   subsets: ['latin'],
@@ -52,7 +53,7 @@ export default function HowToArriveModal({
 }) {
   const [origin, setOrigin] = useState<string>('')
   const [locAllowed, setLocAllowed] = useState<boolean | null>(null)
-
+  const t = useTranslations('first_page.ceremony.modal');
   // Bloquear scroll del body cuando el modal está abierto
   useEffect(() => {
     if (!open) return
@@ -145,7 +146,7 @@ export default function HowToArriveModal({
               aria-label="Cerrar"
               className={`absolute right-3 top-3 rounded-xl bg-white/90 px-3 py-1.5 text-sm shadow hover:bg-white ${bodyFont}`}
             >
-              Cerrar
+              {t('btn')}
             </button>
           </div>
 
@@ -154,7 +155,7 @@ export default function HowToArriveModal({
             {/* Título + dirección */}
             <div>
               {/* h3 → mantiene TU fuente de headings (sin Lora) */}
-              <h3 className="text-2xl sm:text-3xl leading-tight">Cómo llegar</h3>
+              <h3 className="text-2xl sm:text-3xl leading-tight">{t('title')}</h3>
               <p className={`mt-2 text-sm uppercase tracking-wide text-[#b08968] ${bodyFont}`}>{venueName}</p>
               <p className={`text-gray-700 ${bodyFont}`}>{address}</p>
             </div>
@@ -174,7 +175,7 @@ export default function HowToArriveModal({
             {/* GALERÍA */}
             {images.length > 0 && (
               <div className="space-y-3">
-                <p className={`text-sm text-gray-500 ${bodyFont}`}>Un vistazo a la finca</p>
+                <p className={`text-sm text-gray-500 ${bodyFont}`}>{t('title-view')}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {images.slice(0, 6).map((src, i) => (
                     <motion.div
@@ -203,7 +204,7 @@ export default function HowToArriveModal({
               {/* Ciudades cercanas */}
               {nearCities.length > 0 && (
                 <div className={`rounded-2xl border p-4 ${bodyFont}`}>
-                  <p className="font-medium mb-2">Ciudades cercanas</p>
+                  <p className="font-medium mb-2">{t('city.title')}</p>
                   <ul className="space-y-1 text-sm leading-6">
                     {nearCities.map((c, i) => (
                       <li key={i}>
@@ -229,7 +230,7 @@ export default function HowToArriveModal({
               {/* Aeropuertos cercanos */}
               {airports.length > 0 && (
                 <div className={`rounded-2xl border p-4 ${bodyFont}`}>
-                  <p className="font-medium mb-2">Aeropuertos cercanos</p>
+                  <p className="font-medium mb-2">{t('airport.title')}</p>
                   <ul className="space-y-1 text-sm leading-6">
                     {airports.map((a, i) => (
                       <li key={i}>
@@ -246,7 +247,7 @@ export default function HowToArriveModal({
             {/* ASESOR TURÍSTICO / ASISTENCIA */}
             {advisor && (
               <div className={`rounded-2xl border p-4 text-left bg-[#faf9f7] ${bodyFont}`}>
-                <p className="font-medium mb-1">Asistencia / Turismo</p>
+                <p className="font-medium mb-1">{t('advisor.title')}</p>
                 <p className="text-sm leading-6">
                   <span className="font-medium">{advisor.name}</span>
                   {advisor.role ? <span className="text-gray-600"> — {advisor.role}</span> : null}
@@ -280,14 +281,14 @@ export default function HowToArriveModal({
                 </div>
 
                 <p className="text-[13px] text-gray-500 mt-3">
-                  Si necesitas ayuda con alojamiento o transporte local, puedes contactarla directamente.
+                 {t('advisor.info')}
                 </p>
               </div>
             )}
 
             {/* PLANIFICADOR */}
             <div className={`border rounded-2xl p-4 sm:p-5 space-y-3 text-left ${bodyFont}`}>
-              <p className="font-medium text-center sm:text-left">Planificar ruta</p>
+              <p className="font-medium text-center sm:text-left">{t('routing.title')}</p>
               <div className="grid sm:grid-cols-[1fr_auto_auto] gap-3">
                 <input
                   type="text"
@@ -297,7 +298,7 @@ export default function HowToArriveModal({
                   onChange={(e) => setOrigin(e.target.value)}
                 />
                 <button onClick={useMyLocation} className="rounded-xl border px-4 py-2">
-                  Usar mi ubicación
+                  {t('routing.use')}
                 </button>
                 <a
                   href={makeGoogleLink()}
@@ -305,7 +306,7 @@ export default function HowToArriveModal({
                   rel="noreferrer"
                   className="rounded-xl border px-4 py-2 text-center"
                 >
-                  Google Maps
+                  {t('routing.button')}
                 </a>
                 <a
                   href={makeAppleLink()}
@@ -313,7 +314,7 @@ export default function HowToArriveModal({
                   rel="noreferrer"
                   className="rounded-xl border px-4 py-2 text-center sm:col-start-3"
                 >
-                  Apple Maps
+                  {t('routing.button-apple')}
                 </a>
               </div>
               {locAllowed === false && (
@@ -322,7 +323,7 @@ export default function HowToArriveModal({
                 </p>
               )}
               <p className="text-[13px] text-gray-500">
-                Tip: Si escribes tu origen como <code>lat,lng</code> (ej. <code>42.8782,-8.5448</code>) la ruta será más precisa.
+              {t('routing.tip')}
               </p>
             </div>
           </div>
