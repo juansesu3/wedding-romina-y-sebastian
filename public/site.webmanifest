@@ -1,0 +1,15 @@
+{
+    "name": "Romy & Sebas",
+    "short_name": "RomySeb",
+    "start_url": "/es",
+    "lang": "es",
+    "display": "standalone",
+    "background_color": "#faf6f3",
+    "theme_color": "#d49e7a",
+    "icons": [
+      { "src": "/icon.png", "sizes": "192x192", "type": "image/png" },
+      { "src": "/icon.png", "sizes": "512x512", "type": "image/png" },
+      { "src": "/apple-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any maskable" }
+    ]
+  }
+  

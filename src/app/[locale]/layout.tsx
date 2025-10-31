@@ -1,44 +1,105 @@
-import {NextIntlClientProvider, hasLocale} from 'next-intl';
-import {notFound} from 'next/navigation';
-import {routing} from '@/i18n/routing';
-import FixHydra from "../componentes/FixHydra";
-import LangSwitch from "../componentes/LangSwitch";
-import "../globals.css";
+// app/[locale]/layout.tsx
+import type {Metadata} from 'next'
+import {NextIntlClientProvider, hasLocale} from 'next-intl'
+import {notFound} from 'next/navigation'
+import {routing} from '@/i18n/routing'
+import FixHydra from '../componentes/FixHydra'
+import LangSwitch from '../componentes/LangSwitch'
+import '../globals.css'
+import SeoJsonLd from '../componentes/SeoJsonLd'
+
+export async function generateMetadata(
+  {params}: {params: Promise<{locale: string}>}
+): Promise<Metadata> {
+  const {locale} = await params
+  const base = new URL(process.env.APP_URL ?? 'https://romyseb.ch')
+
+  const titleBase =
+    locale === 'fr'
+      ? 'Romina & Sebas — Mariage 2026'
+      : 'Romina & Sebas — Boda 2026'
+
+  const description =
+    locale === 'fr'
+      ? 'Invitation de mariage de Romina et Sebas — 25 juin 2026 à la Finca Atlántida (Galice). Détails, accès, dress code, playlist et photos.'
+      : 'Invitación de boda de Romina y Sebas — 25 de junio de 2026 en Finca Atlántida (Galicia). Detalles, cómo llegar, dress code, playlist y fotos.'
+
+  return {
+    metadataBase: base,
+    title: {
+      default: titleBase,
+      template: `%s | Romina & Sebas`
+    },
+    description,
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        es: '/es',
+        fr: '/fr'
+      }
+    },
+    icons: {
+      icon: [{ url: '/icon.png' }, { url: '/favicon.ico' }],
+      apple: [{ url: '/apple-icon.png', sizes: '180x180' }],
+      shortcut: ['/favicon.ico']
+    },
+    openGraph: {
+      type: 'website',
+      url: base.toString(),
+      siteName: 'RomySeb',
+      title: titleBase,
+      description,
+      images: [
+        {
+          url: '/og/cover.jpg',
+          width: 1200,
+          height: 630,
+          alt:
+            locale === 'fr'
+              ? 'Romina et Sebas à la Finca Atlántida, Galice'
+              : 'Romina y Sebas en Finca Atlántida, Galicia'
+        }
+      ]
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: titleBase,
+      description,
+      images: ['/og/cover.jpg']
+      // creator: '@tu_usuario' // si quieres
+    },
+    manifest: '/site.webmanifest'
+  }
+}
 
 export default async function LocaleLayout({
   children,
   params
 }: {
-  children: React.ReactNode;
-  params: Promise<{locale: string}>;
+  children: React.ReactNode
+  params: Promise<{locale: string}>
 }) {
-  const {locale} = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
+  const {locale} = await params
+  if (!hasLocale(routing.locales, locale)) notFound()
 
-  // (Opcional pero recomendado) Cargar mensajes del locale
-  let messages: Record<string, unknown> | undefined;
+  let messages: Record<string, unknown> | undefined
   try {
-    messages = (await import(`@/messages/${locale}.json`)).default;
-  } catch {
-    // Si no tienes archivos de mensajes, puedes omitir 'messages'
-  }
+    messages = (await import(`@/messages/${locale}.json`)).default
+  } catch {}
 
   return (
     <html lang={locale}>
       <body>
         <FixHydra>
           <NextIntlClientProvider locale={locale} messages={messages}>
-            {/* ⬇️ AHORA el LangSwitch está dentro del provider */}
             <div className="fixed right-4 top-4 z-[1100]">
               <LangSwitch supportedLocales={routing.locales} showLocales={['es','fr']} />
             </div>
-
+            <SeoJsonLd />
             {children}
           </NextIntlClientProvider>
         </FixHydra>
       </body>
     </html>
-  );
+  )
 }
