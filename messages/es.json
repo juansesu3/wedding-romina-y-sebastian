@@ -18,6 +18,12 @@
                 "btn": "Cerrar",
                 "name": "Finca Atlántida (Sens Restauración)",
                 "address": "Lugar Atlántida s/n, 15800, Galicia, España",
+                "important-hours": {
+                    "title": "Horarios importantes",
+                    "arrival": "Llegada recomendada",
+                    "ceremony": "Ceremonia",
+                    "tip": "Te recomendamos llegar con tiempo para disfrutar la bienvenida y evitar retrasos."
+                },
                 "title-view": "Un vistazo a la finca",
                 "city": {
                     "title": "Ciudades cercanas"
@@ -92,6 +98,37 @@
                 "confirmation": {
                     "title1": "Te enviamos el enlace a",
                     "title2": "Revisa tu bandeja (y spam)."
+                }
+            },
+            "confirmed-messages": {
+                "question": "¿Podrás acompañarnos?",
+                "y": "Sí asistiré",
+                "n": "No asistiré",
+                "yes": {
+                    "msg1": "Gracias por confirmar tu asistencia 💛. Si necesitas cambiar algo, contáctanos.",
+                    "msg2": "Te enviamos el enlace a",
+                    "msg3": "Revisa tu bandeja (y spam)."
+                },
+                "no": {
+                    "msg1": "Ya registraste que no podrás asistir. Si cambiaste de decisión, contáctanos 💛",
+                    "form": {
+                        "title": "No podré asistir",
+                        "sub": "Gracias por decirnos, lo valoramos mucho.",
+                        "inputs": {
+                            "name": "Nombre completo *",
+                            "placeholder": "Ej. Romina Suarez",
+                            "email": "Tu correo *",
+                            "placeholder-email": "romina@example.com",
+                            "message": "Mensaje (opcional)",
+                            "placeholder-message": "Lo siento mucho, ese día estaré de viaje...",
+                            "btn": {
+                                "text": "Avisar que no asistiré",
+                                "palceholder": "Lo siento mucho, ese día estaré de viaje...",
+                                "sending": "Enviando...",
+                                "error": "Por favor completa todos los campos."
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -169,8 +206,8 @@
                     "note": "Si prefieres efectivo, prometemos invertirlo en abrazos y buen café ☕️💛",
                     "btn1": "Copiar todo",
                     "btn2": "Cerrar",
-                    "info":"Copiar",
-                    "success":"¡Copiado!"
+                    "info": "Copiar",
+                    "success": "¡Copiado!"
                 }
             },
             "finish": {

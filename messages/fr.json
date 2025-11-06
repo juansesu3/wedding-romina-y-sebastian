@@ -18,6 +18,12 @@
                 "title": "Comment y arriver",
                 "name": "Finca Atlántida (Sens Restauración)",
                 "address": "Lieu-dit Atlántida s/n, 15800, Galice, Espagne",
+                "important-hours": {
+                    "title": "Heures importantes",
+                    "arrival": "Arrivée recommandée",
+                    "ceremony": "Cérémonie",
+                    "tip": "Nous vous recommandons d’arriver à l’avance pour profiter de l’accueil et éviter tout retard."
+                },
                 "title-view": "Un aperçu du domaine",
                 "city": {
                     "title": "Villes à proximité"
@@ -92,6 +98,37 @@
                 "confirmation": {
                     "title1": "Nous avons envoyé le lien à",
                     "title2": "Vérifie ta boîte (et spam)."
+                }
+            },
+            "confirmed-messages": {
+                "question": "Pourrez-vous être des nôtres ?",
+                "y": "Je serai présent(e)",
+                "n": "Je ne pourrai pas venir",
+                "yes": {
+                    "msg1": "Merci d’avoir confirmé votre présence 💛. Si vous devez modifier quelque chose, contactez-nous.",
+                    "msg2": "Nous avons envoyé le lien à",
+                    "msg3": "Vérifiez votre boîte de réception (et vos courriers indésirables)."
+                },
+                "no": {
+                    "msg1": "Vous avez déjà indiqué que vous ne pourrez pas assister. Si vous changez d’avis, contactez-nous 💛",
+                    "form": {
+                        "title": "Je ne pourrai pas assister",
+                        "sub": "Merci de nous l’avoir indiqué, nous l’apprécions beaucoup.",
+                        "inputs": {
+                            "name": "Nom complet *",
+                            "placeholder": "Ex. Romina Couso",
+                            "email": "Votre e-mail *",
+                            "placeholder-email": "romina@example.com",
+                            "message": "Message (facultatif)",
+                            "placeholder-message": "Je suis désolé(e), ce jour-là je serai en voyage...",
+                            "btn": {
+                                "text": "Informer que je ne pourrai pas venir",
+                                "palceholder": "Je suis désolé(e), ce jour-là je serai en voyage...",
+                                "sending": "Envoi en cours...",
+                                "error": "Veuillez remplir tous les champs."
+                            }
+                        }
+                    }
                 }
             }
         }

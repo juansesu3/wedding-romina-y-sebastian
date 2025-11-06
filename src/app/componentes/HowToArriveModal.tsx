@@ -158,6 +158,33 @@ export default function HowToArriveModal({
               <h3 className="text-2xl sm:text-3xl leading-tight">{t('title')}</h3>
               <p className={`mt-2 text-sm uppercase tracking-wide text-[#b08968] ${bodyFont}`}>{venueName}</p>
               <p className={`text-gray-700 ${bodyFont}`}>{address}</p>
+              <div className="mt-6 bg-gradient-to-b from-[#fdf8f5] to-[#f5ece6] border border-[#d0b7a4]/50 rounded-2xl p-5 text-center shadow-md">
+  <h4 className={`text-[#b08968] uppercase tracking-wide text-sm mb-2 ${bodyFont}`}>
+   {t('important-hours.title')}
+  </h4>
+
+  <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+    <div className="flex flex-col items-center">
+      <p className={`text-[#6b4e3d] text-base sm:text-lg font-semibold ${bodyFont}`}>
+      {t('important-hours.arrival')}
+      </p>
+      <p className="text-2xl font-light text-[#3f2f25] mt-1">17:00</p>
+    </div>
+
+    <div className="hidden sm:block h-10 w-px bg-[#d0b7a4]/50"></div>
+
+    <div className="flex flex-col items-center">
+      <p className={`text-[#6b4e3d] text-base sm:text-lg font-semibold ${bodyFont}`}>
+        {t('important-hours.ceremony')}
+      </p>
+      <p className="text-2xl font-light text-[#3f2f25] mt-1">18:00</p>
+    </div>
+  </div>
+
+  <p className={`text-xs text-[#8b6f58] mt-4 italic ${bodyFont}`}>
+    {t('important-hours.tip')}
+  </p>
+</div>
             </div>
 
             {/* MAPA INTERACTIVO */}
@@ -281,7 +308,7 @@ export default function HowToArriveModal({
                 </div>
 
                 <p className="text-[13px] text-gray-500 mt-3">
-                 {t('advisor.info')}
+                  {t('advisor.info')}
                 </p>
               </div>
             )}
@@ -323,7 +350,7 @@ export default function HowToArriveModal({
                 </p>
               )}
               <p className="text-[13px] text-gray-500">
-              {t('routing.tip')}
+                {t('routing.tip')}
               </p>
             </div>
           </div>

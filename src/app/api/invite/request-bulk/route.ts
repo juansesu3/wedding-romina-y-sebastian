@@ -5,22 +5,27 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { render } from '@react-email/render'
 import { nanoid } from 'nanoid'
+import React from 'react'
 import { connectDB } from '@/lib/mongoose'
 import Invitation from '@/models/Invitado'
-import InviteMagicLinkEmail from '@/lib/emails'
+import InviteMagicLinkEmailEs from '@/lib/emails-es'
+import InviteMagicLinkEmailFr from '@/lib/emails-fr'
 import { signGuestToken, buildAccessLink } from '@/lib/jwt'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const APP_URL = (process.env.APP_URL || 'https://romyseb.ch').replace(/\/+$/, '')
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Romina & Sebas <contact@romyseb.ch>'
 
+type SupportedLang = 'es' | 'fr'
+
 type GroupInput = {
   contactName: string
   contactEmail: string
   contactPhone?: string
-  preferredLanguage?: 'es' | 'fr' | 'en' | 'de' | 'it'
+  preferredLanguage?: SupportedLang
   notes?: string
 }
+
 type GuestInput = {
   role?: 'primary' | 'companion'
   firstName: string
@@ -44,40 +49,67 @@ export async function POST(req: Request) {
 
     const body = (await req.json()) as { group: GroupInput; guests: GuestInput[] }
     if (!body?.group || !Array.isArray(body?.guests) || body.guests.length === 0) {
-      return NextResponse.json({ message: 'Payload inválido. Esperado { group, guests[] }' }, { status: 400 })
+      return NextResponse.json(
+        { message: 'Payload inválido. Esperado { group, guests[] }' },
+        { status: 400 }
+      )
     }
 
     const { group, guests } = body
 
     // === Validación contacto
     if (!group.contactName || !group.contactEmail) {
-      return NextResponse.json({ message: 'Nombre y correo del contacto principal son requeridos.' }, { status: 400 })
+      return NextResponse.json(
+        { message: 'Nombre y correo del contacto principal son requeridos.' },
+        { status: 400 }
+      )
     }
     const reEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
     if (!reEmail.test(group.contactEmail)) {
-      return NextResponse.json({ message: `Correo del contacto no válido: ${group.contactEmail}` }, { status: 400 })
+      return NextResponse.json(
+        { message: `Correo del contacto no válido: ${group.contactEmail}` },
+        { status: 400 }
+      )
     }
 
     // === Validación invitados
     for (const g of guests) {
       if (!g.firstName || !g.lastName) {
-        return NextResponse.json({ message: 'Cada invitado debe tener nombre y apellidos.' }, { status: 400 })
+        return NextResponse.json(
+          { message: 'Cada invitado debe tener nombre y apellidos.' },
+          { status: 400 }
+        )
       }
       const ageNum = Number(g.age)
       if (!Number.isFinite(ageNum) || ageNum < 0 || ageNum > 120) {
-        return NextResponse.json({ message: `Edad inválida para ${g.firstName} ${g.lastName}` }, { status: 400 })
+        return NextResponse.json(
+          { message: `Edad inválida para ${g.firstName} ${g.lastName}` },
+          { status: 400 }
+        )
       }
       if (g.isChild && ageNum >= 18) {
-        return NextResponse.json({ message: `Marcado como niño/niña con edad 18+ para ${g.firstName} ${g.lastName}` }, { status: 400 })
+        return NextResponse.json(
+          { message: `Marcado como niño/niña con edad 18+ para ${g.firstName} ${g.lastName}` },
+          { status: 400 }
+        )
       }
       if (g.originalGuestEmail && !reEmail.test(g.originalGuestEmail)) {
-        return NextResponse.json({ message: `Email de invitado no válido: ${g.originalGuestEmail}` }, { status: 400 })
+        return NextResponse.json(
+          { message: `Email de invitado no válido: ${g.originalGuestEmail}` },
+          { status: 400 }
+        )
       }
       if (g.email && !reEmail.test(g.email)) {
-        return NextResponse.json({ message: `Email de invitado no válido: ${g.email}` }, { status: 400 })
+        return NextResponse.json(
+          { message: `Email de invitado no válido: ${g.email}` },
+          { status: 400 }
+        )
       }
       if (g.targetEmail && !reEmail.test(g.targetEmail)) {
-        return NextResponse.json({ message: `targetEmail no válido: ${g.targetEmail}` }, { status: 400 })
+        return NextResponse.json(
+          { message: `targetEmail no válido: ${g.targetEmail}` },
+          { status: 400 }
+        )
       }
     }
 
@@ -107,7 +139,9 @@ export async function POST(req: Request) {
         songSuggestion: g.songSuggestion || undefined,
       }
     })
-    if (!normalized.some(n => n.role === 'primary')) {
+
+    // nos aseguramos de que haya un primary
+    if (!normalized.some((n) => n.role === 'primary')) {
       normalized[0].role = 'primary'
     }
 
@@ -148,13 +182,16 @@ export async function POST(req: Request) {
       })
     )
 
+    // idioma del grupo (default español)
+    const groupLang: SupportedLang = group.preferredLanguage || 'es'
+
     // === Crear una sola invitación (padre) con todos los miembros
     const invitationDoc = await Invitation.create({
       groupId,
       contactName: group.contactName,
       contactEmail: group.contactEmail.toLowerCase(),
       contactPhone: group.contactPhone || undefined,
-      preferredLanguage: group.preferredLanguage || 'es',
+      preferredLanguage: groupLang,
       notes: group.notes || '',
       members,
     })
@@ -162,26 +199,48 @@ export async function POST(req: Request) {
     // === Envío de emails (no bloquea persistencia) ===
     const sendOps = members.map(async (m) => {
       try {
-        const html = await render(InviteMagicLinkEmail({ firstName: m.firstName, link: m.accessLink }))
+        // escogemos la plantilla según el idioma del grupo
+        const EmailComponent =
+          groupLang === 'fr' ? InviteMagicLinkEmailFr : InviteMagicLinkEmailEs
+
+        const html = await render(React.createElement(EmailComponent, { firstName: m.firstName, link: m.accessLink }))
+
         const { error } = await resend.emails.send({
           from: EMAIL_FROM,
           to: m.targetEmail,
-          subject: 'Tu enlace de acceso a la boda',
+          subject:
+            groupLang === 'fr'
+              ? 'Votre lien d’accès au mariage'
+              : 'Tu enlace de acceso a la boda',
           html,
         })
         if (error) throw new Error(String(error))
         return { email: m.targetEmail, ok: true }
-      } catch (e:  unknown) {
-        console.error('[request-bulk] email error →', m.targetEmail, (e as Error)?.message)
-        return { email: m.targetEmail, ok: false, error: (e instanceof Error ? e.message : 'error') }
+      } catch (e) {
+        console.error(
+          '[request-bulk] email error →',
+          m.targetEmail,
+          e instanceof Error ? e.message : e
+        )
+        return {
+          email: m.targetEmail,
+          ok: false,
+          error: e instanceof Error ? e.message : 'error',
+        }
       }
     })
+
     const results = await Promise.all(sendOps)
-    const anyFail = results.some(r => !r.ok)
+    const anyFail = results.some((r) => !r.ok)
 
     return NextResponse.json(
       anyFail
-        ? { message: 'Algunos correos no se pudieron enviar', groupId, invitationId: invitationDoc._id, results }
+        ? {
+            message: 'Algunos correos no se pudieron enviar',
+            groupId,
+            invitationId: invitationDoc._id,
+            results,
+          }
         : { ok: true, groupId, invitationId: invitationDoc._id, results },
       { status: anyFail ? 207 : 200 }
     )

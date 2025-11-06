@@ -1,7 +1,7 @@
 // emails/InviteMagicLink.tsx
 import * as React from 'react'
 
-export default function InviteMagicLinkEmail({
+export default function InviteMagicLinkEmailEs({
   firstName,
   link,
 }: { firstName: string; link: string }) {

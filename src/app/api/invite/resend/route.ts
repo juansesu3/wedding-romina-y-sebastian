@@ -5,7 +5,7 @@ import { connectDB } from '@/lib/mongoose'
 import Invitation from '@/models/Invitado' // ⬅️ si tu modelo es Invitation.ts, cámbialo
 import { Resend } from 'resend'
 import { render } from '@react-email/render'
-import InviteMagicLinkEmail from '@/lib/emails'
+import InviteMagicLinkEmail from '@/lib/emails-es'
 import { signGuestToken, buildAccessLink } from '@/lib/jwt'
 
 export const runtime = 'nodejs'

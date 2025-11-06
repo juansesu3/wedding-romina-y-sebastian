@@ -46,7 +46,7 @@ export interface Invitation {
   contactName: string
   contactEmail: string
   contactPhone?: string
-  preferredLanguage?: 'es' | 'fr' | 'en' | 'de' | 'it'
+  preferredLanguage?: 'es' | 'fr'
   notes?: string
 
   // Miembros (incluye al contacto principal como 'primary')
@@ -97,7 +97,7 @@ const InvitationSchema = new Schema<Invitation>(
     contactName:  { type: String, required: true },
     contactEmail: { type: String, required: true, lowercase: true, trim: true, index: true },
     contactPhone: { type: String },
-    preferredLanguage: { type: String, enum: ['es','fr','en','de','it'], default: 'es' },
+    preferredLanguage: { type: String, enum: ['es','fr'], default: 'es' },
     notes: { type: String },
 
     members: { type: [MemberSchema], default: [] },
