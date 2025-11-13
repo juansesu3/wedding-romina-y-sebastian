@@ -497,10 +497,10 @@ export default function InvitacionClient({
         open={isBankOpen}
         onClose={() => setIsBankOpen(false)}
         account={{
-          holder: 'Juan Sebastián Suárez & Romina',
-          iban: 'CH93 0076 2011 6238 5295 7',
-          bankName: 'Tu Banco Bonito SA',
-          bic: 'POFICHBEXXX',
+          holder: 'Suarez Ramirez R. & Suarez Ramirez',
+          iban: 'CH03 0840 1000 0795 5820 8',
+          bankName: 'Banque Migros SA',
+          bic: 'MIGRCHZZXXX',
           currency: 'CHF',
           concept: 'Regalo de boda — Juan & Romina',
           note: 'Si prefieres efectivo, prometemos invertirlo en abrazos y buen café ☕️💛',
